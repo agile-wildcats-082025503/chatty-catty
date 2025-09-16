@@ -24,7 +24,7 @@ To get the code and application, you'll need [Git](https://git-scm.com).
 Run the following at the command line:
 ```bash
 # Clone this repository
-$ git clone https://github.com/ihuaylupo/manning-smia
+$ gh repo clone agile-wildcats-082025503/chatty-catty
 
 # Go into the repository
 $ cd chatty-catty
