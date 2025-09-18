@@ -15,14 +15,18 @@ This is an application for serving AI responses to questions related to the Univ
    1. [Visual Studio Code](https://code.visualstudio.com/download)
    2. [JetBrains IntelliJ](https://www.jetbrains.com/idea/download)
    3. [Eclipse](https://www.eclipse.org/downloads/)
-4. TODO...
-   1. Dependency installers like [Maven](https://maven.apache.org/download.cgi?) (Java) or [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (Node) 
+4. Dependency intallers
+   1. [Maven](https://maven.apache.org/download.cgi?) (Java)
+   2. [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (Node) 
 
 ## Development instructions
 
-To get the code and application, you'll need [Git](https://git-scm.com).
-
-Run the following at the command line:
+1. Install the requirements above.
+2. Download this codebase using the green button on the top right above that says `[<> Code]`
+3. Create a myconfig.properties file in the project root.
+   1. Add an OpenAI api-key with this line: `spring.ai.openai.api-key=Insert-Your-Key-here`
+   2. Don't check myconfig into git. Some IDEs will suggest to add it, but the .gitignore file will filter it out.
+4. Run the following at the command line:
 ```bash
 # Clone this repository
 $ gh repo clone agile-wildcats-082025503/chatty-catty
