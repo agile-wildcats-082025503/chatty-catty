@@ -10,11 +10,12 @@ This is an application for serving AI responses to questions related to the Univ
 ## Requirements
 
 1. [Git Client](http://git-scm.com)
-2. Development environment (choose one):
+2. [Java Development Kit](https://www.oracle.com/java/technologies/downloads/)
+3. Development environment (choose one):
    1. [Visual Studio Code](https://code.visualstudio.com/download)
    2. [JetBrains IntelliJ](https://www.jetbrains.com/idea/download)
    3. [Eclipse](https://www.eclipse.org/downloads/)
-3. TODO...
+4. TODO...
    1. Dependency installers like [Maven](https://maven.apache.org/download.cgi?) (Java) or [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (Node) 
 
 ## Development instructions
@@ -30,8 +31,11 @@ $ git clone https://github.com/ihuaylupo/manning-smia
 $ cd chatty-catty
 
 # Install dependencies
-TODO
+$ mvn clean install
 
 # Run the app
-TODO
+$ mvn spring-boot:run
 ```
+## Testing It Out
+As of this writing, the app only tells jokes. Open a browser to the following url to see what it has to say:
+http://localhost:8080/ai/chat/string
