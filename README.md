@@ -25,17 +25,38 @@ To get the code and application, you'll need [Git](https://git-scm.com).
 Run the following at the command line:
 ```bash
 # Clone this repository
-$ git clone https://github.com/ihuaylupo/manning-smia
+git clone https://github.com/ihuaylupo/manning-smia
 
 # Go into the repository
-$ cd chatty-catty
+cd chatty-catty
 
 # Install dependencies
-$ mvn clean install
+mvn clean install
 
 # Run the app
-$ mvn spring-boot:run
+mvn spring-boot:run
 ```
 ## Testing It Out
 As of this writing, the app only tells jokes. Open a browser to the following url to see what it has to say:
 http://localhost:8080/ai/chat/string
+
+## Git Commands
+Switch to a branch before making any changes
+```
+git checkout existing-branch
+git checkout -b new-branch-name
+```
+Pull the latest code to an existing branch
+```
+git checkout main
+git pull origin main
+git checkout your-branch
+git merge main
+```
+Check in changes:
+```
+git add .
+git commit -m "Description of changes"
+git push origin your-branch
+```
+After checking in changes, it will display a URL to open to get the code changes reviewed and approved.
