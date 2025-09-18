@@ -7,4 +7,3 @@ spring:
       options:
         model: "gpt-3.5-turbo"
         temperature: "0.7"
-      api-key: "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"
