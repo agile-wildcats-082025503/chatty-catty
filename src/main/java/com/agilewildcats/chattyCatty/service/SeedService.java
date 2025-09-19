@@ -1,28 +1,83 @@
-package com.agilewildcats.chattyCatty.controller;
+package com.agilewildcats.chattyCatty.service;
 
-import com.agilewildcats.chattyCatty.service.SeedService;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 
-@RestController
-@RequestMapping("/admin")
-public class AdminController {
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 
-    private final SeedService seedService;
+@Service
+public class SeedService {
 
-    public AdminController(SeedService seedService) {
-        this.seedService = seedService;
+    private final DocumentIngestionService ingestionService;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final AtomicReference<JobStatus> status = new AtomicReference<>(JobStatus.idle());
+
+    public SeedService(DocumentIngestionService ingestionService) {
+        this.ingestionService = ingestionService;
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @PostMapping("/seed")
-    public String startSeed(@RequestParam(defaultValue = "docs") String docsDir) {
-        return seedService.startSeed(docsDir);
+    public synchronized String startSeed(String docsDirPath) {
+        JobStatus current = status.get();
+        if (current.isRunning()) {
+            return "already_running";
+        }
+        status.set(JobStatus.running("Starting seed..."));
+        executor.submit(() -> {
+            try {
+                File docsDir = new File(docsDirPath);
+                if (!docsDir.exists() || !docsDir.isDirectory()) {
+                    status.set(JobStatus.failed("docs directory not found: " + docsDirPath));
+                    return;
+                }
+                File[] files = docsDir.listFiles();
+                if (files == null) files = new File[0];
+                int total = files.length;
+                int processed = 0;
+                for (File f : files) {
+                    if (!f.isFile()) continue;
+                    status.set(JobStatus.running("Processing " + f.getName() + " (" + (processed+1) + "/" + total + ")"));
+                    String content;
+                    String name = f.getName();
+                    if (name.toLowerCase().endsWith(".pdf")) {
+                        content = PdfUtil.extractTextFromPdf(f);
+                    } else {
+                        content = java.nio.file.Files.readString(f.toPath(), StandardCharsets.UTF_8);
+                    }
+                    ingestionService.addOrUpdateDocument(content, f.getAbsolutePath(), name);
+                    processed++;
+                }
+                status.set(JobStatus.completed("Seed completed: processed " + processed + " files"));
+            } catch (Exception ex) {
+                status.set(JobStatus.failed("Seed failed: " + ex.getMessage()));
+            }
+        });
+        return "started";
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping("/seed/status")
-    public SeedService.JobStatus getSeedStatus() {
-        return seedService.getStatus();
+    public synchronized JobStatus getStatus() {
+        return status.get();
+    }
+
+    // POJO for reporting
+    public static class JobStatus {
+        private final String state;
+        private final String message;
+        private final boolean running;
+
+        private JobStatus(String state, String message, boolean running) {
+            this.state = state;
+            this.message = message;
+            this.running = running;
+        }
+        public static JobStatus idle() { return new JobStatus("idle","idle",false); }
+        public static JobStatus running(String msg) { return new JobStatus("running",msg,true); }
+        public static JobStatus completed(String msg) { return new JobStatus("completed",msg,false); }
+        public static JobStatus failed(String msg) { return new JobStatus("failed",msg,false); }
+
+        public String getState() { return state; }
+        public String getMessage() { return message; }
+        public boolean isRunning() { return running; }
     }
 }

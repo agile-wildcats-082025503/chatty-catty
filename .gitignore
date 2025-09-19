@@ -32,7 +32,7 @@ replay_pid*
 
 # local settings specific to the user
 myconfig.properties
-myconfig.yaml
+myconfig.yml
 
 
 

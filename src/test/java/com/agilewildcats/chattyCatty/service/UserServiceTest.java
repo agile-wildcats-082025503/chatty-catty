@@ -1,5 +1,3 @@
-*** Begin Patch
-        *** Add File: src/test/java/com/agilewildcats/chattyCatty/service/UserServiceTest.java
 package com.agilewildcats.chattyCatty.service;
 
 import com.agilewildcats.chattyCatty.model.Role;
@@ -76,5 +74,3 @@ class UserServiceTest {
         assertThat(userService.getAllUsers()).hasSize(2);
     }
 }
-
-        *** End Patch

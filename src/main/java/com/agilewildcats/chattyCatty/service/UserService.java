@@ -32,6 +32,10 @@ public class UserService {
         return userRepository.save(u);
     }
 
+    public void updateUser(User user) {
+        userRepository.save(user);
+    }
+
     public User findByUsername(String username) {
         return userRepository.findByUsername(username).orElse(null);
     }

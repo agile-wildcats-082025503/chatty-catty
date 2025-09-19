@@ -1,11 +1,11 @@
-PROJECT_NAME=rag-app
+PROJECT_NAME=chatty-catty-app
 COMPOSE=docker-compose
 
 run:
-	@echo "🚀 Starting RAG stack..."
+	@echo "🚀 Starting CHATTYCATTY stack..."
 	$(COMPOSE) up --build -d
 	@echo "⏳ Waiting for app to become healthy..."
-	@until [ "$$(docker inspect --format='{{json .State.Health.Status}}' rag-app)" = "\"healthy\"" ]; do \
+	@until [ "$$(docker inspect --format='{{json .State.Health.Status}}' chatty-catty-app)" = "\"healthy\"" ]; do \
 		echo "   → Waiting..."; \
 		sleep 5; \
 	done
@@ -58,10 +58,10 @@ status:
 	fi
 	@curl -s -H "X-API-KEY: $$ADMIN_API_KEY" http://localhost:8080/admin/seed/status | jq .
 
-# Tail only seed-related logs from the rag-app container
+# Tail only seed-related logs from the chatty-catty-app container
 logs-seed:
-	@echo "📜 Tailing seed-related logs from rag-app (Ctrl+C to stop)..."
-	@docker logs -f rag-app 2>&1 | grep --line-buffered -i "seed"
+	@echo "📜 Tailing seed-related logs from chatty-catty-app (Ctrl+C to stop)..."
+	@docker logs -f chatty-catty-app 2>&1 | grep --line-buffered -i "seed"
 
 # Trigger seed and auto-poll status until finished
 reseed:
@@ -96,7 +96,7 @@ reseed-logs:
 		-H "X-API-KEY: $$ADMIN_API_KEY" > /dev/null
 	@echo "⏳ Polling status + tailing logs (Ctrl+C to stop)..."
 	@{ \
-	  docker logs -f rag-app 2>&1 | grep --line-buffered -i "seed" & \
+	  docker logs -f chatty-catty-app 2>&1 | grep --line-buffered -i "seed" & \
 	  LOG_PID=$$!; \
 	  while true; do \
 	    out=$$(curl -s -H "X-API-KEY: $$ADMIN_API_KEY" http://localhost:8080/admin/seed/status); \
@@ -121,8 +121,8 @@ dev:
 	@echo ""
 	@echo "🚀 Starting stack in dev mode (backend + frontend logs)..."
 	$(COMPOSE) up --build -d
-	@echo "📜 Tailing logs from rag-app (Spring Boot) and rag-frontend (React)..."
-	@docker logs -f rag-app rag-frontend
+	@echo "📜 Tailing logs from chatty-catty-app (Spring Boot) and chatty-catty-frontend (React)..."
+	@docker logs -f chatty-catty-app chatty-catty-frontend
 
 # Stop stack and reset environment (containers, networks, volumes, logs)
 clean-dev:
@@ -131,7 +131,7 @@ clean-dev:
 	@echo "🗑  Removing dangling images (if any)..."
 	docker image prune -f
 	@echo "🗑  Removing old container logs..."
-	docker ps -a -q --filter "name=rag-app" --filter "name=rag-frontend" | xargs -r docker rm -f
+	docker ps -a -q --filter "name=chatty-catty-app" --filter "name=chatty-catty-frontend" | xargs -r docker rm -f
 	@echo "✅ Clean dev environment ready."
 
 # Full rebuild: clean everything and restart stack with logs
@@ -198,7 +198,7 @@ demo-fast: reseed-logs qa-full
 
 # Auto demo: picks demo-fast if containers are running, else full demo
 demo-auto:
-	@if docker ps --format '{{.Names}}' | grep -q '^rag-app$$'; then \
+	@if docker ps --format '{{.Names}}' | grep -q '^chatty-catty-app$$'; then \
 		echo ""; \
 		echo "==============================================="; \
 		echo "🐱  CHATTYCATTY DEMO-AUTO MODE - FAST PATH     "; \

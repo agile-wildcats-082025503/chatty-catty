@@ -15,10 +15,15 @@ This is an application for serving AI responses to questions related to the Univ
    1. [Visual Studio Code](https://code.visualstudio.com/download)
    2. [JetBrains IntelliJ](https://www.jetbrains.com/idea/download)
    3. [Eclipse](https://www.eclipse.org/downloads/)
-4. Dependency intallers
-   1. [Maven](https://maven.apache.org/download.cgi?) (Java)
-   2. [npm](https://doc.npmjs.com/downloading-and-installing-node-js-and-npm) (Node)
+4. [Maven](https://maven.apache.org/download.cgi?) (Java builder)
 5. [Docker](https://www.docker.com/products/docker-desktop/)
+   1. Requires [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install)
+      1. [Here's a fix](https://stackoverflow.com/questions/76479583/docker-desktop-requires-a-newer-wsl-kernel-version) if it complains about WSL updates
+   2. Ensure it's set to run on restart using Settings->General->Start Docker...
+6. [Node.js and npm](https://www.geeksforgeeks.org/node-js/how-to-download-and-install-node-js-and-npm/)
+   1. Check the "Install the necessary tools" checkbox when installing Node.js (ex: installs Chocolatey on Windows)
+7. [Make](https://medium.com/@divyeshpal07/mastering-gnu-make-and-makefiles-the-developers-guide-22df3b97cc0d)
+8. [Lombok setup for your IDE](https://projectlombok.org/setup/)
 
 ## Development instructions
 
@@ -37,6 +42,9 @@ cd chatty-catty
 
 # Install dependencies
 mvn clean install
+cd frontend
+npm install
+cd ..
 
 # Run the app
 mvn spring-boot:run

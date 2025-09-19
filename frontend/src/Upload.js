@@ -4,8 +4,8 @@ import axios from "axios";
 const API_BASE = "http://localhost:8080";
  
  export default function Upload() {
-   const [files, setFiles] = useState([]);
-   const [status, setStatus] = useState("");
+  const [files, setFiles] = useState([]);
+  const [status, setStatus] = useState("");
   const [adminKey, setAdminKey] = useState(""); // kept for backward compatibility (optional)
   const [seedStatus, setSeedStatus] = useState(null);
   const [isPolling, setIsPolling] = useState(false);

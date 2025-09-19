@@ -12,4 +12,12 @@ spring:
   config:
     import:
       - optional:file:./myconfig.properties
-      - optional:file:./myconfig.yaml
+      - optional:file:./myconfig.yml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ragdb
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

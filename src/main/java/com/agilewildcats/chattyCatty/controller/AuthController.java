@@ -1,11 +1,13 @@
 package com.agilewildcats.chattyCatty.controller;
 
+import com.agilewildcats.chattyCatty.model.Role;
 import com.agilewildcats.chattyCatty.model.User;
 import com.agilewildcats.chattyCatty.security.JwtUtil;
 import com.agilewildcats.chattyCatty.service.UserService;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Map;
 
@@ -47,7 +49,7 @@ public class AuthController {
         User u = userService.findByUsername(username);
         if (u == null) return ResponseEntity.notFound().build();
         u.getRoles().add(Role.ROLE_ADMIN);
-        userRepository.save(u);
+        userService.updateUser(u);
         return ResponseEntity.ok(Map.of("username", u.getUsername(), "roles", u.getRoles()));
     }
 
@@ -57,7 +59,7 @@ public class AuthController {
         User u = userService.findByUsername(username);
         if (u == null) return ResponseEntity.notFound().build();
         u.getRoles().remove(Role.ROLE_ADMIN);
-        userRepository.save(u);
+        userService.updateUser(u);
         return ResponseEntity.ok(Map.of("username", u.getUsername(), "roles", u.getRoles()));
     }
 

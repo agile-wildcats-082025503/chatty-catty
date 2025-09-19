@@ -1,5 +1,3 @@
-*** Begin Patch
-        *** Add File: src/test/java/com/agilewildcats/chattyCatty/controller/AuthControllerTest.java
 package com.agilewildcats.chattyCatty.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -107,5 +105,3 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.deleted").value("carol"));
     }
 }
-
-        *** End Patch

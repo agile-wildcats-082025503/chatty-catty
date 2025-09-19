@@ -45,8 +45,8 @@ Below is a full cheatsheet of all available commands.
 - **`make qa`**  
   Quick health check of:
     - Postgres (`ragdb`)
-    - Backend (`rag-app` `/actuator/health`)
-    - Frontend (`rag-frontend` `/index.html`)
+    - Backend (`chatty-catty-app` `/actuator/health`)
+    - Frontend (`chatty-catty-frontend` `/index.html`)
 
 - **`make qa-full`**  
   Runs `make qa` and also sends a test query to `/chat/formatted` to validate **RAG pipeline**.

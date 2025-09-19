@@ -14,9 +14,9 @@ public class Document {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String source;
+    private String source;   // filename (e.g., "intro_to_computing.pdf")
 
-    private String filePath;
+    private String filePath; // absolute/relative path, unique per file
 
     @Column(columnDefinition = "text")
     private String content;
