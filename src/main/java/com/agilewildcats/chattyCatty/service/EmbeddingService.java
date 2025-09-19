@@ -1,9 +1,11 @@
 package com.agilewildcats.chattyCatty.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class EmbeddingService {
@@ -40,8 +42,10 @@ public class EmbeddingService {
                 });
     }
 
-    private float[] parseEmbedding(String json) {
+    private float[] parseEmbedding(String json) throws JsonProcessingException {
         // TODO: parse JSON into float[] (use Jackson or Gson)
-        return new float[1536];
+        ObjectMapper objectMapper = new ObjectMapper();
+        float[] floatArray = objectMapper.readValue(json, float[].class);
+        return floatArray;
     }
 }

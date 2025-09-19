@@ -13,16 +13,17 @@ export default function App() {
 
   return (
     <div>
-      <h1>🐱 ChattyCatty</h1>
-      {!user ? (
-        <Auth onLogin={handleLogin} />
-      ) : (
-        <>
-          <p>Welcome, {user.username}! (<a href="#" onClick={() => {localStorage.removeItem("chatty_token"); setUser(null);}}>Logout</a>)</p>
-          <Upload />
-        </>
+      <div>
+        <h1>🐱 ChattyCatty</h1>
+        {!user ? (
+          <Auth onLogin={handleLogin} />
+        ) : (
+          </>
+            <p>Welcome, {user.username}! (<a href="#" onClick={() => {localStorage.removeItem("chatty_token"); setUser(null);}}>Logout</a>)</p>
+            <Upload />
+          </>
       )}
-    </div>
+      </div>
       <div className="app">
         <header>
           <h1>RAG Assistant (Spring Boot)</h1>
@@ -43,5 +44,6 @@ export default function App() {
           <small>Frontend talking to backend at <code>http://localhost:8080</code></small>
         </footer>
       </div>
+    </div>
   );
 }
