@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 import java.util.Set;
@@ -14,14 +15,14 @@ import java.util.stream.Collectors;
 @Component
 public class JwtUtil {
 
-    private final Key key;
+    private final SecretKey key;
     private final long expirationMs = 1000L * 60 * 60 * 24; // 24h
 
     public JwtUtil(Environment env) {
         String secret = env.getProperty("JWT_SECRET");
         if (secret == null || secret.length() < 16) {
             // fallback - but you should set JWT_SECRET in env for production
-            secret = "dev-secret-change-me-please!";
+            secret = "internal-only-dev-secret-change-me-please!";
         }
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
@@ -38,8 +39,13 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Jws<Claims> validate(String token) throws JwtException {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+    public Claims validate(String token) throws JwtException {
+//        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
 

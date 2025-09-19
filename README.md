@@ -35,10 +35,18 @@ This is an application for serving AI responses to questions related to the Univ
 4. Run the following at the command line:
 ```bash
 # Clone this repository
-$ gh repo clone agile-wildcats-082025503/chatty-catty
+gh repo clone agile-wildcats-082025503/chatty-catty
+
+# Set required API environment variables
+export OPENAI_API_KEY=GET_THE_OPENAI_API_KEY
+export ADMIN_API_KEY=MAKE_UP_A_KEY
+# (Windows is set VAR=Value)
 
 # Go into the repository
 cd chatty-catty
+
+# Run the DB
+docker run -d --name ragdb -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=ragdb -p 5432:5432 ankane/pgvector
 
 # Install dependencies
 mvn clean install
@@ -51,7 +59,13 @@ mvn spring-boot:run
 ```
 ## Testing It Out
 As of this writing, the app only tells jokes. Open a browser to the following url to see what it has to say:
-http://localhost:8080/ai/chat/string
+http://localhost:3000
+
+Docker diagnostics
+  ```
+  docker ps -a
+  docker logs <container_id>
+  ```
 
 ## Git Commands
 Switch to a branch before making any changes

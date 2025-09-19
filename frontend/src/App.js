@@ -18,10 +18,10 @@ export default function App() {
         {!user ? (
           <Auth onLogin={handleLogin} />
         ) : (
-          </>
+          <div>
             <p>Welcome, {user.username}! (<a href="#" onClick={() => {localStorage.removeItem("chatty_token"); setUser(null);}}>Logout</a>)</p>
             <Upload />
-          </>
+          </div>
       )}
       </div>
       <div className="app">

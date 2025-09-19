@@ -44,8 +44,10 @@ public class EmbeddingService {
 
     private float[] parseEmbedding(String json) throws JsonProcessingException {
         // TODO: parse JSON into float[] (use Jackson or Gson)
+        //return new float[1536];
         ObjectMapper objectMapper = new ObjectMapper();
-        float[] floatArray = objectMapper.readValue(json, float[].class);
+        float[] floatArray;
+        floatArray = objectMapper.readValue(json, float[].class);
         return floatArray;
     }
 }

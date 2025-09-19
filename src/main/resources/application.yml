@@ -9,6 +9,7 @@ spring:
       options:
         model: "gpt-3.5-turbo"
         temperature: "0.7"
+      api-key: ${OPENAI_API_KEY}
   config:
     import:
       - optional:file:./myconfig.properties
@@ -18,6 +19,18 @@ spring:
     username: postgres
     password: postgres
   jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+    properties:
+      hibernate:
+        ddl-auto: update
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+      show-sql: true
+  security:
+    user:
+      name: admin
+      password: admin
+  web:
+    cors:
+      allowed-origins: "http://localhost:3000, http://localhost:8080"
+      allowed-methods: "GET,PUT,POST,DELETE"
+      allowed-headers: "*"
+      allow-credentials: "true"

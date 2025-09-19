@@ -29,11 +29,13 @@ const API_BASE = "http://localhost:8080";
      try {
        const formData = new FormData();
        files.forEach((f) => formData.append("files", f));
-      const headers = { "Content-Type": "multipart/form-data" };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-      else if (adminKey) headers["X-API-KEY"] = adminKey;
+       const headers = {
+              "Content-Type": "multipart/form-data",
+       };
+       if (token) headers["Authorization"] = `Bearer ${token}`;
+       else if (adminKey) headers["X-API-KEY"] = adminKey;
 
-      const resp = await axios.post(`${API_BASE}/docs/uploadFiles`, formData, { headers });
+       const resp = await axios.post(`${API_BASE}/docs/uploadFiles`, formData, { headers });
        setStatus(resp.data || "Upload complete.");
      } catch (err) {
        console.error(err);

@@ -1,5 +1,6 @@
 package com.agilewildcats.chattyCatty.service;
 
+import com.agilewildcats.chattyCatty.util.PdfUtil;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
