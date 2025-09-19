@@ -17,7 +17,8 @@ This is an application for serving AI responses to questions related to the Univ
    3. [Eclipse](https://www.eclipse.org/downloads/)
 4. Dependency intallers
    1. [Maven](https://maven.apache.org/download.cgi?) (Java)
-   2. [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) (Node) 
+   2. [npm](https://doc.npmjs.com/downloading-and-installing-node-js-and-npm) (Node)
+5. [Docker](https://www.docker.com/products/docker-desktop/)
 
 ## Development instructions
 
@@ -64,3 +65,117 @@ git commit -m "Description of changes"
 git push origin your-branch
 ```
 After checking in changes, it will display a URL to open to get the code changes reviewed and approved.
+
+---
+
+# 🐱 ChattyCatty – Java + Spring RAG System
+
+[![Java CI with Maven](https://github.com/agile-wildcats-082025503/chatty-catty/actions/workflows/tests.yml/badge.svg)](https://github.com/agile-wildcats-082025503/chatty-catty/actions/workflows/tests.yml)
+
+[![codecov](https://codecov.io/gh/your-org/chattycatty/branch/main/graph/badge.svg)](https://codecov.io/gh/your-org/chattycatty)
+
+ChattyCatty is a **Retrieval-Augmented Generation (RAG)** stack built with **Java + Spring Boot + React + PostgreSQL (pgvector)**.  
+It comes with a **Makefile-driven developer workflow** for ingestion, reseeding, QA, and demos.
+
+---
+
+## 🚀 Quick Start
+
+1. Start dev stack:
+   ```bash
+   make dev
+   ```
+2. Bootstrap default admin (username=`admin`, password=`admin`):
+   ```bash
+   make create-admin
+   ```
+
+3. Login as admin and get JWT:
+   ```bash
+   make login-admin
+   ```
+   Copy the JWT and export it:
+   ```bash
+   export ADMIN_JWT=eyJhbGciOiJIUzI1...
+   ```
+
+4. Ingest docs (requires admin JWT):
+   ```bash
+   make reseed-logs
+   ```
+
+5. Run QA checks:
+   ```bash
+   make qa-full
+   ```
+
+---
+
+## 📂 Developer Workflow
+| Command	       | Description                          |
+|----------------|--------------------------------------|
+| `make dev`	    |Start backend + frontend + tail logs |
+| `make clean-dev`	 |Stop containers, wipe volumes/logs   |
+| `make rebuild-dev`	|Reset everything & restart stack     |
+| `make reseed`	|Trigger reseed and poll until done |
+| `make reseed-logs`	 |Reseed with live logs & status|
+| `make reseed-dev`	 |Rebuild + reseed in one go|
+
+## ✅ Quality Assurance
+
+|Command	|Description|
+|-----------|-----------|
+|`make qa`	|Quick health check (DB, backend, frontend)|
+|`make qa-full`	|Full QA including RAG pipeline test|
+
+## 🎤 Demo Modes
+
+|Command	|Mode|
+|-----------|----|
+|`make demo`	|Full cycle → rebuild + reseed + QA|
+|`make demo-fast`	|Fast path → reseed + QA only|
+|`make demo-auto`	|Auto → picks fastest mode depending on running containers|
+
+Example:
+
+   ```bash
+   make demo-auto
+   ```
+Output:
+```
+===============================================
+🐱  CHATTYCATTY DEMO-AUTO MODE - FAST PATH     
+===============================================
+
+⚡ Containers already running → running demo-fast
+✅ RAG pipeline responded successfully
+🎉 Demo environment is ready!
+```
+## 📊 Monitoring
+
+|Command	|Description|
+|-----------|-----------|
+|`make status`	|Show current ingestion job status|
+|`make logs-seed`	|Tail only seed logs|
+|`make health`	|Live dashboard: backend + seed status|
+
+## 🔑 Environment Setup
+Set your admin key before running ingestion commands:
+   ```bash
+    export ADMIN_API_KEY=your-secret-key
+   ```
+## 🏗️ Tech Stack
+* Backend: Java 21 + Spring Boot 3 + JPA
+* Database: PostgreSQL + pgvector
+* Frontend: React + Axios
+* Ingestion: PDF/TXT/Markdown parsing + OpenAI embeddings
+* Dev Tools: Docker Compose + Makefile
+
+## 🎉 Demo-Ready
+ChattyCatty is developer-friendly and presentation-ready:
+
+* ASCII art banners in demo/dev commands
+* One-command demo setup (make demo or make demo-auto)
+* Built-in QA + monitoring
+
+🐱 Happy hacking with ChattyCatty!
