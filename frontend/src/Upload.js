@@ -32,8 +32,6 @@ const API_BASE = "http://localhost:8080";
        const headers = {
               "Content-Type": "multipart/form-data",
        };
-       if (token) headers["Authorization"] = `Bearer ${token}`;
-       else if (adminKey) headers["X-API-KEY"] = adminKey;
 
        const resp = await axios.post(`${API_BASE}/docs/uploadFiles`, formData, { headers });
        setStatus(resp.data || "Upload complete.");
@@ -44,16 +42,9 @@ const API_BASE = "http://localhost:8080";
    }
  
    async function startSeed() {
-    // prefer JWT token; fallback to adminKey
-    if (!token && !adminKey) {
-      alert("Please login or enter admin API key first");
-      return;
-    }
     setSeedStatus({ state: "requested", message: "Requesting seed..." });
     try {
       const headers = {};
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-      else headers["X-API-KEY"] = adminKey;
       await axios.post(`${API_BASE}/admin/seed?docsDir=docs`, null, { headers });
        pollSeedStatus();
      } catch (err) {
@@ -66,8 +57,6 @@ const API_BASE = "http://localhost:8080";
      const interval = setInterval(async () => {
        try {
         const headers = {};
-        if (token) headers["Authorization"] = `Bearer ${token}`;
-        else headers["X-API-KEY"] = adminKey;
         const resp = await axios.get(`${API_BASE}/admin/seed/status`, { headers });
          setSeedStatus(resp.data);
          if (!resp.data.running) {

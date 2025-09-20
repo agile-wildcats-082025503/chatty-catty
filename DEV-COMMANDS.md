@@ -1,7 +1,46 @@
 # 🐱 ChattyCatty Developer Commands
 
-This project comes with a **Makefile-powered developer workflow** for RAG ingestion, QA, and demos.  
+This project comes with a **Makefile-powered developer workflow** that creates VMs for RAG ingestion, QA, and demos.  
+
 Below is a full cheatsheet of all available commands.
+
+---
+
+## Git Commands
+The code is in git, so here are some commands to assist with development, demo, and testing.
+
+Pull the latest code to an existing branch to get the latest or prepare for checkin.
+   ```
+   git checkout main
+   git pull origin main
+   git checkout your-branch
+   git merge main
+   ```
+Switch to a branch before making any changes.
+   ```
+   git checkout existing-branch
+   git checkout -b new-branch-name
+   ```
+Check in changes:
+   ```
+   git add .
+   git commit -m "Description of changes"
+   git push origin your-branch
+   ```
+After checking in changes, it will display a URL to open to get the code changes reviewed and approved.
+
+---
+
+## 🛠 Development Workflow
+
+- **`make dev`**  
+  Start the stack (DB, API backend, and frontend) and tail logs from both containers.
+
+- **`make clean-dev`**  
+  Stop stack, remove containers, networks, volumes, and logs.
+
+- **`make rebuild-dev`**  
+  Wipe environment and restart stack fresh.
 
 ---
 
@@ -24,19 +63,6 @@ Below is a full cheatsheet of all available commands.
 
 - **`make reseed-dev`**  
   Rebuild stack from scratch and reseed docs with logs.
-
----
-
-## 🛠 Development Workflow
-
-- **`make dev`**  
-  Start the stack (`backend + frontend`) and tail logs from both containers.
-
-- **`make clean-dev`**  
-  Stop stack, remove containers, networks, volumes, and logs.
-
-- **`make rebuild-dev`**  
-  Wipe environment and restart stack fresh.
 
 ---
 
@@ -68,62 +94,39 @@ Below is a full cheatsheet of all available commands.
 
 ---
 
-## 📊 Monitoring
+## 📊 Monitoring and Diagnostics
 
 - **`make health`**  
   Live monitoring dashboard that refreshes every 5s:
     - Backend health (`/actuator/health`)
     - Seed status (`/admin/seed/status`)
 
+### Docker Commands
+- **Docker diagnostics**
+   ```
+   docker ps -a
+   docker logs <container_name>
+   ```
+- **Log into a Docker VM**
+   ```
+   docker login [OPTIONS] [SERVER]
+   ```
 ---
 
 ## 🔑 Environment
 
-- Ensure `ADMIN_API_KEY` is set before using ingestion-related commands:
+- Ensure `OPENAI_API_KEY` is set before using ingestion-related commands. This is done using the .env file but can also be done in the environment itself.
 ```bash
-  export ADMIN_API_KEY=your-secret-key
+  # Set in the environment
+  export OPENAI_API_KEY=your-secret-key
+  
+  # Or here's the format for setting in the .env file
+  OPENAI_API_KEY=your-secret-key
 ```
-## 🔑 User Management
-
-- **`make create-admin`**
-  Ensure a default admin user exists in Postgres (`username=admin`, `password=admin`).
-  Uses a precomputed **bcrypt("admin")** password hash. Skips if already exists.
-
-- **`make login-admin`**
-  Logs in as the default admin and prints out the JWT token.
-  Example usage:
-  ```bash
-  make login-admin
-  export ADMIN_JWT=eyJhbGciOiJIUzI1...
-  ```
-- **`make promote-user username=<user>`**  
-  Add **ROLE_ADMIN** to a given user. Requires `ADMIN_JWT`.  
-  Example:
-  ```bash
-  make promote-user username=alice
-  ``` 
-- **`make demote-user username=<user>`**  
-  Remove **ROLE_ADMIN** from a given user. Requires `ADMIN_JWT`.  
-  Example:
-  ```bash
-  make demote-user username=alice
-  ``` 
-- **`make list-users`**
-  List all registered users and their roles. Requires ADMIN_JWT.
-  Example:
-  ```bash
-  make list-users
-  ```
-- **`make delete-user username=<user>`**
-  Delete a given user entirely. Requires ADMIN_JWT.
-  Example:
-  ```bash
-  make delete-user username=alice
-  ```
 ---
 
 
-🚀 Common Flows
+## 🚀 Common Flows
 
 Start fresh dev environment + logs:
 
@@ -149,12 +152,3 @@ Live monitor ingestion + backend health:
 
 `make health`
 
-
----
-
-## Save It
-
-Create the file:
-
-```bash
-echo "<paste above>" > DEV-COMMANDS.md

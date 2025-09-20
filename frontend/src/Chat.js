@@ -16,11 +16,7 @@ export default function Chat() {
     setResponse(null);
     try {
       const url = `${API_BASE}/chat/formatted?q=${encodeURIComponent(q)}&format=${format}`;
-      // We created endpoint to return the desired format string; but to keep structured response,
-      // we will call /chat/formatted without format to get JSON. Adjust server if needed.
-      // If server returns raw HTML/Markdown as string, we can display directly.
-      const resp = await axios.get(`${API_BASE}/chat/formatted?q=${encodeURIComponent(q)}`);
-      // resp.data is the ChatFormattedResponse JSON (answer, markdown, html, sources)
+      const resp = await axios.get(url);
       setResponse(resp.data);
     } catch (err) {
       console.error(err);

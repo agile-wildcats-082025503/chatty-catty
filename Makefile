@@ -42,22 +42,13 @@ rebuild:
 
 # Trigger backend seed job (requires ADMIN_API_KEY env var)
 seed:
-	@if [ -z "$$ADMIN_API_KEY" ]; then \
-		echo "❌ ADMIN_API_KEY not set. Please export it or put it in .env"; \
-		exit 1; \
-	fi
 	@echo "🚀 Triggering seed endpoint..."
 	@curl -s -X POST "http://localhost:8080/admin/seed?docsDir=docs" \
-		-H "X-API-KEY: $$ADMIN_API_KEY" \
 		&& echo "\n✅ Seed job requested!"
 
 # Check current seed job status
 status:
-	@if [ -z "$$ADMIN_API_KEY" ]; then \
-		echo "❌ ADMIN_API_KEY not set. Please export it or put it in .env"; \
-		exit 1; \
-	fi
-	@curl -s -H "X-API-KEY: $$ADMIN_API_KEY" http://localhost:8080/admin/seed/status | jq .
+	@curl -s -H http://localhost:8080/admin/seed/status | jq .
 
 # Tail only seed-related logs from the chatty-catty-app container
 logs-seed:
@@ -66,16 +57,12 @@ logs-seed:
 
 # Trigger seed and auto-poll status until finished
 reseed:
-	@if [ -z "$$ADMIN_API_KEY" ]; then \
-		echo "❌ ADMIN_API_KEY not set. Please export it or put it in .env"; \
-		exit 1; \
-	fi
 	@echo "🚀 Triggering reseed..."
 	@curl -s -X POST "http://localhost:8080/admin/seed?docsDir=docs" \
-		-H "X-API-KEY: $$ADMIN_API_KEY" > /dev/null
+		> /dev/null
 	@echo "⏳ Polling status (Ctrl+C to stop)..."
 	@while true; do \
-		out=$$(curl -s -H "X-API-KEY: $$ADMIN_API_KEY" http://localhost:8080/admin/seed/status); \
+		out=$$(curl -s -H http://localhost:8080/admin/seed/status); \
 		state=$$(echo $$out | jq -r .state); \
 		msg=$$(echo $$out | jq -r .message); \
 		echo " → $$state : $$msg"; \
@@ -88,19 +75,15 @@ reseed:
 
 # Trigger reseed and tail logs at the same time
 reseed-logs:
-	@if [ -z "$$ADMIN_API_KEY" ]; then \
-		echo "❌ ADMIN_API_KEY not set. Please export it or put it in .env"; \
-		exit 1; \
-	fi
 	@echo "🚀 Triggering reseed with live logs..."
 	@curl -s -X POST "http://localhost:8080/admin/seed?docsDir=docs" \
-		-H "X-API-KEY: $$ADMIN_API_KEY" > /dev/null
+		> /dev/null
 	@echo "⏳ Polling status + tailing logs (Ctrl+C to stop)..."
 	@{ \
 	  docker logs -f chatty-catty-app 2>&1 | grep --line-buffered -i "seed" & \
 	  LOG_PID=$$!; \
 	  while true; do \
-	    out=$$(curl -s -H "X-API-KEY: $$ADMIN_API_KEY" http://localhost:8080/admin/seed/status); \
+	    out=$$(curl -s -H http://localhost:8080/admin/seed/status); \
 	    state=$$(echo $$out | jq -r .state); \
 	    msg=$$(echo $$out | jq -r .message); \
 	    echo " → $$state : $$msg"; \
@@ -219,15 +202,11 @@ demo-auto:
 
 # Live health dashboard: backend + seed status
 health:
-	@if [ -z "$$ADMIN_API_KEY" ]; then \
-		echo "❌ ADMIN_API_KEY not set. Please export it or put it in .env"; \
-		exit 1; \
-	fi
 	@echo "📊 Monitoring system health (Ctrl+C to stop)..."
 	@while true; do \
 		echo "---- $$(date) ----"; \
 		curl -s http://localhost:8080/actuator/health | jq .; \
-		curl -s -H "X-API-KEY: $$ADMIN_API_KEY" http://localhost:8080/admin/seed/status | jq .; \
+		curl -s -H http://localhost:8080/admin/seed/status | jq .; \
 		echo ""; \
 		sleep 5; \
 	done

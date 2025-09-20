@@ -2,29 +2,13 @@
 import React, { useState } from "react";
 import Chat from "./Chat";
 import Upload from "./Upload";
-import Auth from "./Auth";
 
 export default function App() {
-  const [user, setUser] = useState(null);
-
-  function handleLogin(data) {
-    setUser({ username: data.username });
-  }
 
   return (
     <div>
-      <div>
-        <h1>🐱 ChattyCatty</h1>
-        {!user ? (
-          <Auth onLogin={handleLogin} />
-        ) : (
-          <div>
-            <p>Welcome, {user.username}! (<a href="#" onClick={() => {localStorage.removeItem("chatty_token"); setUser(null);}}>Logout</a>)</p>
-            <Upload />
-          </div>
-      )}
-      </div>
       <div className="app">
+        <h1>🐱 ChattyCatty</h1>
         <header>
           <h1>RAG Assistant (Spring Boot)</h1>
           <p>Ask questions and upload docs to extend the knowledge base.</p>
