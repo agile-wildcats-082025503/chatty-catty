@@ -10,19 +10,19 @@ Below is a full cheatsheet of all available commands.
 The code is in git, so here are some commands to assist with development, demo, and testing.
 
 Pull the latest code to an existing branch to get the latest or prepare for checkin.
-   ```
+   ```bash
    git checkout main
    git pull origin main
    git checkout your-branch
    git merge main
    ```
 Switch to a branch before making any changes.
-   ```
+   ```bash
    git checkout existing-branch
    git checkout -b new-branch-name
    ```
 Check in changes:
-   ```
+   ```bash
    git add .
    git commit -m "Description of changes"
    git push origin your-branch
@@ -103,26 +103,28 @@ After checking in changes, it will display a URL to open to get the code changes
 
 ### Docker Commands
 - **Docker diagnostics**
-   ```
+   ```bash
    docker ps -a
    docker logs <container_name>
    ```
-- **Log into a Docker VM**
-   ```
-   docker login [OPTIONS] [SERVER]
+- **Log into a Docker VM to run local commands**
+   ```bash
+   docker exec -it chatty-catty-app /bin/bash
+   # Execute various commands...then exit using:
+   exit 
    ```
 ---
 
 ## 🔑 Environment
 
 - Ensure `OPENAI_API_KEY` is set before using ingestion-related commands. This is done using the .env file but can also be done in the environment itself.
-```bash
-  # Set in the environment
-  export OPENAI_API_KEY=your-secret-key
-  
-  # Or here's the format for setting in the .env file
-  OPENAI_API_KEY=your-secret-key
-```
+   ```bash
+   # Set in the environment
+   export OPENAI_API_KEY=your-secret-key
+
+   # Or here's the format for setting in the .env file
+   OPENAI_API_KEY=your-secret-key
+   ```
 ---
 
 

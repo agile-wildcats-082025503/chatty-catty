@@ -33,7 +33,7 @@ services:
     ports:
       - "8080:8080"
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail --silent http://localhost:8080/actuator/health | grep UP || exit 1"]
+      test: "wget -T5 -qO- http://localhost:8080/actuator/health | grep UP || exit 1"
       interval: 10s
       timeout: 5s
       retries: 6

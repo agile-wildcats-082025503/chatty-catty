@@ -13,7 +13,7 @@ ChattyCatty is a **Retrieval-Augmented Generation (RAG)** stack built with **Jav
 It comes with a **Makefile-driven developer workflow** for ingestion, reseeding, QA, and demos.
 It runs in Virtual Machines (VMs) powered by Docker.
 
-![Alt text](doc/resources/media/chatty-catty-logo.jpg)
+![UofA Women's Wildcat mascot saying Chatty Catty](doc/resources/media/chatty-catty-logo.jpg)
 
 ---
 
@@ -57,7 +57,7 @@ This is an application for serving AI responses to questions related to the Univ
    cd ..
    ```
 4. Execute the makefile command to spin up docker VMs for the DB, API, and frontend:
-   ```commandline
+   ```bash
    make dev
    ```
    This command builds and starts the VMS:
@@ -93,9 +93,9 @@ NOTE: Add documents into the docs folder for automatic ingestion into RAG.
    ```
 
 ---
-### Makefile commands
+### Developer Usage
 
-See the DEV-COMMANDS.md file for the full list and explanation of Makefile commands.
+See the [DEV_COMMANDS](DEV-COMMANDS.md) file for the full list and explanation of Makefile commands.
 
 ---
 
