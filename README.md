@@ -37,10 +37,10 @@ This is an application for serving AI responses to questions related to the Univ
 # Clone this repository
 gh repo clone agile-wildcats-082025503/chatty-catty
 
-# Set required API environment variables
-export OPENAI_API_KEY=GET_THE_OPENAI_API_KEY
-export ADMIN_API_KEY=MAKE_UP_A_KEY
-# (Windows is set VAR=Value)
+# Create a .env file at project root with required env vars
+OPENAI_API_KEY=GET_THE_OPENAI_API_KEY
+ADMIN_API_KEY=MAKE_UP_A_KEY
+JWT_SECRET=b3c9f8e7a1d4g6h2j5k8l0m9n7p3q2r4s6t8u1v0w9x5y3z7a2b4c6d8e0f1g3
 
 # Go into the repository
 cd chatty-catty

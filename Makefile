@@ -1,5 +1,6 @@
 PROJECT_NAME=chatty-catty-app
 COMPOSE=docker-compose
+include .env
 
 run:
 	@echo "🚀 Starting CHATTYCATTY stack..."
