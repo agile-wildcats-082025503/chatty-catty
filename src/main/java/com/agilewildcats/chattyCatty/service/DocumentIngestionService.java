@@ -19,6 +19,15 @@ public class DocumentIngestionService {
         this.repository = repository;
     }
 
+    public void addDocument(String content) {
+        embeddingService.embedText(content).subscribe(embedding -> {
+            Document doc = new Document();
+            doc.setContent(content);
+            doc.setEmbeddingJson(EmbeddingUtils.toJson(embedding));
+            repository.save(doc);
+        });
+    }
+
     public void addOrUpdateDocument(String content, String filePath, String sourceName) {
         repository.deleteByFilePath(filePath);
 

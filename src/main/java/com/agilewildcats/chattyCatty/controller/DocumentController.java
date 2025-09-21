@@ -27,7 +27,7 @@ public class DocumentController {
                 ? PdfUtil.pdfFilesToText(file)
                 : new String(file.getBytes(), StandardCharsets.UTF_8);
 
-        ingestionService.addDocument(content, filename);
+        ingestionService.addDocument(content);
         return "File '" + filename + "' uploaded and embedded.";
     }
 
@@ -40,7 +40,7 @@ public class DocumentController {
                     ? PdfUtil.pdfFilesToText(file)
                     : new String(file.getBytes(), StandardCharsets.UTF_8);
 
-            ingestionService.addDocument(content, filename);
+            ingestionService.addDocument(content);
         }
         return files.size() + " documents uploaded and embedded.";
     }
