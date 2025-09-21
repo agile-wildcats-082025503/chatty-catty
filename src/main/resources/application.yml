@@ -29,6 +29,10 @@ spring:
     user:
       name: admin
       password: admin
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
   web:
     cors:
       allowed-origins: "http://localhost:3000, http://localhost:8080"

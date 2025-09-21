@@ -40,7 +40,7 @@ clean:
 rebuild:
 	$(COMPOSE) build --no-cache
 
-# Trigger backend seed job (requires ADMIN_API_KEY env var)
+# Trigger backend seed job
 seed:
 	@echo "🚀 Triggering seed endpoint..."
 	@curl -s -X POST "http://localhost:8080/admin/seed?docsDir=docs" \

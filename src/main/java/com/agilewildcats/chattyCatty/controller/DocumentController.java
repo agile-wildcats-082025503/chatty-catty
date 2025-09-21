@@ -1,11 +1,13 @@
 package com.agilewildcats.chattyCatty.controller;
 
 import com.agilewildcats.chattyCatty.service.DocumentIngestionService;
+import com.agilewildcats.chattyCatty.util.PdfUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @RestController
 @RequestMapping("/docs")
@@ -17,18 +19,29 @@ public class DocumentController {
         this.ingestionService = ingestionService;
     }
 
-    // Upload plain text directly
-    @PostMapping("/upload")
-    public String uploadDoc(@RequestBody String content) {
-        ingestionService.addDocument(content);
-        return "Document uploaded and embedded.";
-    }
-
     // Upload a text file
     @PostMapping("/uploadFile")
     public String uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-        String content = new String(file.getBytes(), StandardCharsets.UTF_8);
-        ingestionService.addDocument(content);
-        return "File uploaded and embedded.";
+        String filename = file.getOriginalFilename();
+        String content = filename != null && filename.endsWith(".pdf")
+                ? PdfUtil.pdfFilesToText(file)
+                : new String(file.getBytes(), StandardCharsets.UTF_8);
+
+        ingestionService.addDocument(content, filename);
+        return "File '" + filename + "' uploaded and embedded.";
+    }
+
+    // Upload multiple files
+    @PostMapping("/uploadFiles")
+    public String uploadFiles(@RequestParam("files") List<MultipartFile> files) throws IOException {
+        for (MultipartFile file : files) {
+            String filename = file.getOriginalFilename();
+            String content = filename != null && filename.endsWith(".pdf")
+                    ? PdfUtil.pdfFilesToText(file)
+                    : new String(file.getBytes(), StandardCharsets.UTF_8);
+
+            ingestionService.addDocument(content, filename);
+        }
+        return files.size() + " documents uploaded and embedded.";
     }
 }

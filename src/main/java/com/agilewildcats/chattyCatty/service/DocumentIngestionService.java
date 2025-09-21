@@ -19,20 +19,6 @@ public class DocumentIngestionService {
         this.repository = repository;
     }
 
-    public void addDocument(String content) {
-        // Split into chunks
-        List<String> chunks = TextChunker.chunkText(content, 1200);
-
-        for (String chunk : chunks) {
-            embeddingService.embedText(chunk).subscribe(embedding -> {
-                Document doc = new Document();
-                doc.setContent(chunk);
-                doc.setEmbeddingJson(EmbeddingUtils.toJson(embedding));
-                repository.save(doc);
-            });
-        }
-    }
-
     public void addOrUpdateDocument(String content, String filePath, String sourceName) {
         repository.deleteByFilePath(filePath);
 

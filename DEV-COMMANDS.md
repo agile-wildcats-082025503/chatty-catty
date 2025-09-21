@@ -47,7 +47,7 @@ After checking in changes, it will display a URL to open to get the code changes
 ## 📂 Document Ingestion
 
 - **`make seed`**  
-  Trigger ingestion of all files in `docs/` via `/admin/seed` (requires `ADMIN_API_KEY`).
+  Trigger ingestion of all files in `docs/` via `/admin/seed`.
 
 - **`make status`**  
   Show current ingestion job status as JSON.
