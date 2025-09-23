@@ -28,14 +28,14 @@ public class ChatController {
 
     @GetMapping("/general")
     public Flux<String> generateMessage(@RequestParam(name="message", defaultValue = "Tell me a joke") String message) {
-        logger.debug("generateMessage : message={}", message);
+        logger.info("generateMessage : message={}", message);
         return chatModel.stream(message);
     }
 
     @GetMapping("/formatted")
     public String askFormatted(@RequestParam(name="q", required = true) String q,
                                @RequestParam(name="format", defaultValue = "markdown") String format) {
-        logger.debug("askFormatted : format='{}' and q='{}'", format, q);
+        logger.info("askFormatted : format='{}' and q='{}'", format, q);
 
         ChatFormattedResponse response = ragService.askFormatted(q).block();
 

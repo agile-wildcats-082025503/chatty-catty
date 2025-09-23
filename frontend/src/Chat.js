@@ -20,7 +20,7 @@ export default function Chat() {
       setResponse(resp.data);
     } catch (err) {
       console.error(err);
-      alert("Error: " + (err?.response?.data || err.message));
+      alert("Error: " + err?.response?.data + ": " + err.message);
     } finally {
       setLoading(false);
     }

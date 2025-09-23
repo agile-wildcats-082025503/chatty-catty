@@ -7,7 +7,10 @@ import com.agilewildcats.chattyCatty.util.TextChunker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,13 +43,12 @@ public class DocumentIngestionService {
                 content, sourceName, chunks.size());
 
         for (String chunk : chunks) {
-            embeddingService.embedText(chunk).subscribe(embedding -> {
-                Document doc = new Document();
-                doc.setSource(sourceName);
-                doc.setContent(chunk);
-                doc.setEmbeddingJson(EmbeddingUtils.toJson(embedding));
-                repository.save(doc);
-            });
+            float[] embedding = embeddingService.embedText(chunk).block();
+            Document doc = new Document();
+            doc.setSource(sourceName);
+            doc.setContent(chunk);
+            doc.setEmbeddingJson(EmbeddingUtils.toJson(embedding));
+            repository.save(doc);
             // Debugging loop break to prevent overloading embeddingService with exceptions
             break;
         }
@@ -68,14 +70,13 @@ public class DocumentIngestionService {
                 content, filePath, sourceName, chunks.size());
 
         for (String chunk : chunks) {
-            embeddingService.embedText(chunk).subscribe(embedding -> {
-                Document doc = new Document();
-                doc.setSource(sourceName);
-                doc.setFilePath(filePath);
-                doc.setContent(chunk);
-                doc.setEmbeddingJson(EmbeddingUtils.toJson(embedding));
-                repository.save(doc);
-            });
+            float[] embedding = embeddingService.embedText(chunk).block();
+            Document doc = new Document();
+            doc.setSource(sourceName);
+            doc.setFilePath(filePath);
+            doc.setContent(chunk);
+            doc.setEmbeddingJson(EmbeddingUtils.toJson(embedding));
+            repository.save(doc);
         }
     }
 }

@@ -1,19 +1,4 @@
+# Set the logging level to DEBUG to get all messages
 logging:
   level:
-    root: DEBUG
-spring:
-  config:
-    import:
-      - optional:file:./myconfig.properties
-      - optional:file:./myconfig.yml
-      - optional:file:./.env
-  datasource:
-    url: jdbc:postgresql://${POSTGRES_SERVER}/${POSTGRES_INSTANCE}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
-  web:
-    cors:
-      allowed-origins: "http://localhost:3000, http://localhost:8080"
-      allowed-methods: "GET,PUT,POST,DELETE"
-      allowed-headers: "*"
-      allow-credentials: "true"
+    root: INFO

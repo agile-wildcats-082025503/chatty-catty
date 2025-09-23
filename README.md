@@ -45,9 +45,14 @@ This is an application for serving AI responses to questions related to the Univ
    1. Add an OpenAI api-key with this line: `OPENAI_API_KEY=Insert-Your-Key-here`
    2. Don't check this file into git. Some IDEs will suggest to add it, but the .gitignore file will filter it out.
 3. Prepare the environment:
-   1. Set up the database. Should only be done once.
-   ```bash
-   docker run -d --name ragdb -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=ragdb -p 5432:5432 ankane/pgvector
+   1. Create a file in the project root called .env and fill it with the following info:
+   ```
+   OPENAI_API_KEY=Your-OpenAI-key-here (check the Discord for info)
+   POSTGRES_INSTANCE=ragdb
+   POSTGRES_SERVER=localhost:5432
+   POSTGRES_USER=postgres
+   POSTGRES_PASSWORD=postgres
+   SPRING_PROFILES_ACTIVE=dev
    ```
    2. This should be done the first time and repeated whenever maven or npm dependencies are changed. 
    ```bash

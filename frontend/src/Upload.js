@@ -37,7 +37,7 @@ const API_BASE = "http://localhost:8080";
        setStatus(resp.data || "Upload complete.");
      } catch (err) {
        console.error(err);
-       setStatus("Upload failed: " + (err?.response?.data || err.message));
+       setStatus("Upload failed: " + (err.message || err?.response?.data));
      }
    }
  
@@ -48,6 +48,7 @@ const API_BASE = "http://localhost:8080";
       await axios.post(`${API_BASE}/admin/seed?docsDir=docs`, null, { headers });
        pollSeedStatus();
      } catch (err) {
+       console.error(err);
        setSeedStatus({ state: "error", message: err?.response?.data || err.message });
      }
    }
@@ -64,6 +65,7 @@ const API_BASE = "http://localhost:8080";
            setIsPolling(false);
          }
        } catch (err) {
+         console.error(err);
          clearInterval(interval);
          setIsPolling(false);
          setSeedStatus({ state: "error", message: err?.response?.data || err.message });
@@ -78,17 +80,8 @@ const API_BASE = "http://localhost:8080";
        <div className="buttons">
          <button onClick={uploadFiles}>Upload Selected</button>
        </div>
-      <div style={{ marginTop: 8 }}>
-        <label>Admin API Key (optional):</label>
-        <input type="password" value={adminKey} onChange={e => setAdminKey(e.target.value)} placeholder="X-API-KEY" />
-      </div>
-      <div style={{ marginTop: 8 }}>
-        <label>Auth Token:</label>
-        <input type="text" value={token || ""} onChange={e => setToken(e.target.value)} placeholder="Paste JWT here or login via Auth" />
-        <div style={{ fontSize: 12, color: "#666" }}>Or use the Auth panel to login and the token will be saved to localStorage.</div>
-      </div>
        <div style={{ marginTop: 8 }}>
-         <button onClick={startSeed} disabled={!adminKey || isPolling}>Start Seed</button>
+         <button onClick={startSeed} disabled={isPolling}>Start Seed</button>
          <div>
            {seedStatus && <div>Seed status: {seedStatus.state} — {seedStatus.message}</div>}
          </div>
