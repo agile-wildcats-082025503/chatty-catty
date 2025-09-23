@@ -113,6 +113,18 @@ After checking in changes, it will display a URL to open to get the code changes
    # Execute various commands...then exit using:
    exit 
    ```
+- **Use [pgAdmin](https://www.pgadmin.org/) to connect to the database**
+  Setting up a connection in a local dev env:
+  1. Add Server
+     2. General Tab
+        1. Name: ragdb
+     3. Connection Tab
+        1. Host name/address: localhost
+        2. Port: 5432
+        3. Save password? Enable
+        4. Password: postgres
+           1. This might change - check src/main/resources/application.yml for the latest DB settings.
+        5. Click Save
 ---
 
 ## 🔑 Environment

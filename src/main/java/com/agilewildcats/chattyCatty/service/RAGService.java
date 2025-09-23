@@ -4,6 +4,8 @@ import com.agilewildcats.chattyCatty.dto.ChatFormattedResponse;
 import com.agilewildcats.chattyCatty.repo.DocumentRepository;
 import com.agilewildcats.chattyCatty.util.EmbeddingUtils;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -15,12 +17,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * OpenAI chat tool using Retrieval-Augmented Generation to provide specific context
+ * for AI queries. Uses a document repository to fetch information to add to the
+ * query that provides the AI with contextual information.
+ */
 @Service
 public class RAGService {
 
     private final WebClient webClient;
     private final EmbeddingService embeddingService;
     private final DocumentRepository documentRepository;
+    private final static Logger logger = LoggerFactory.getLogger(RAGService.class);
 
     public RAGService(WebClient.Builder builder, EmbeddingService embeddingService, DocumentRepository repo) {
         this.webClient = builder
@@ -47,6 +55,8 @@ public class RAGService {
             }
             """.formatted(context, query);
 
+            logger.debug("ask : query={}", query);
+
             return webClient.post()
                     .uri("/chat/completions")
                     .bodyValue(body)
@@ -59,6 +69,8 @@ public class RAGService {
             String embeddingStr = EmbeddingUtils.toJson(embedding);
 
             List<Object[]> results = documentRepository.findTopKWithScores(embeddingStr, 5);
+
+            logger.debug("askFormatted : query={}", query);
 
             double threshold = 0.80;
             Map<String, List<ChatFormattedResponse.RetrievedDoc>> groupedDocs =
@@ -83,15 +95,15 @@ public class RAGService {
             });
 
             String body = """
-        {
-          "model": "gpt-4o-mini",
-          "messages": [
-            {"role": "system", "content": "Answer using only the following context. Cite sources in parentheses by filename, e.g., (Spring Boot Docs)."},
-            {"role": "system", "content": "%s"},
-            {"role": "user", "content": "%s"}
-          ]
-        }
-        """.formatted(contextBuilder.toString(), query);
+            {
+              "model": "gpt-4o-mini",
+              "messages": [
+                {"role": "system", "content": "Answer using only the following context. Cite sources in parentheses by filename, e.g., (Spring Boot Docs)."},
+                {"role": "system", "content": "%s"},
+                {"role": "user", "content": "%s"}
+              ]
+            }
+            """.formatted(contextBuilder.toString(), query);
 
             return webClient.post()
                     .uri("/chat/completions")

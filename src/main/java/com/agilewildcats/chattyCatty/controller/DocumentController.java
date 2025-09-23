@@ -2,6 +2,8 @@ package com.agilewildcats.chattyCatty.controller;
 
 import com.agilewildcats.chattyCatty.service.DocumentIngestionService;
 import com.agilewildcats.chattyCatty.util.PdfUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +16,7 @@ import java.util.List;
 public class DocumentController {
 
     private final DocumentIngestionService ingestionService;
+    private final static Logger logger = LoggerFactory.getLogger(DocumentController.class);
 
     public DocumentController(DocumentIngestionService ingestionService) {
         this.ingestionService = ingestionService;
@@ -26,8 +29,9 @@ public class DocumentController {
         String content = filename != null && filename.endsWith(".pdf")
                 ? PdfUtil.pdfFilesToText(file)
                 : new String(file.getBytes(), StandardCharsets.UTF_8);
+        logger.debug("uploadFile : fileName={}", filename);
 
-        ingestionService.addDocument(content);
+        ingestionService.addDocument(content, filename);
         return "File '" + filename + "' uploaded and embedded.";
     }
 
@@ -40,8 +44,9 @@ public class DocumentController {
                     ? PdfUtil.pdfFilesToText(file)
                     : new String(file.getBytes(), StandardCharsets.UTF_8);
 
-            ingestionService.addDocument(content);
+            ingestionService.addDocument(content, filename);
         }
+        logger.debug("uploadFiles : files.size={}", files.size());
         return files.size() + " documents uploaded and embedded.";
     }
 }

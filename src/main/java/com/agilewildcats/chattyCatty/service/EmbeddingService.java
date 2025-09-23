@@ -1,16 +1,17 @@
 package com.agilewildcats.chattyCatty.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class EmbeddingService {
 
     private final WebClient webClient;
+    private final static Logger logger = LoggerFactory.getLogger(EmbeddingService.class);
 
     public EmbeddingService(WebClient.Builder builder) {
         this.webClient = builder
@@ -21,11 +22,14 @@ public class EmbeddingService {
 
     public Mono<float[]> embedText(String text) {
         String body = """
-    {
-      "input": "%s",
-      "model": "text-embedding-3-small"
-    }
-    """.formatted(text);
+        {
+          "model": "text-embedding-3-small"
+          "encoding_format": "float"
+          "input": "%s",
+        }
+        """.formatted(text);
+
+        logger.debug("embedText : text={}", text);
 
         return webClient.post()
                 .uri("/embeddings")
@@ -40,14 +44,5 @@ public class EmbeddingService {
                     }
                     return vector;
                 });
-    }
-
-    private float[] parseEmbedding(String json) throws JsonProcessingException {
-        // TODO: parse JSON into float[] (use Jackson or Gson)
-        //return new float[1536];
-        ObjectMapper objectMapper = new ObjectMapper();
-        float[] floatArray;
-        floatArray = objectMapper.readValue(json, float[].class);
-        return floatArray;
     }
 }

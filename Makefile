@@ -106,7 +106,7 @@ dev:
 	@echo "🚀 Starting stack in dev mode (backend + frontend logs)..."
 	$(COMPOSE) up --build -d
 	@echo "📜 Tailing logs from chatty-catty-app (Spring Boot) and chatty-catty-frontend (React)..."
-	@docker logs -f chatty-catty-app chatty-catty-frontend
+	@docker compose logs -f app frontend
 
 # Stop stack and reset environment (containers, networks, volumes, logs)
 clean-dev:
@@ -210,96 +210,6 @@ health:
 		echo ""; \
 		sleep 5; \
 	done
-
-# Create a default admin user in Postgres (username=admin, password=admin)
-create-admin:
-	@echo "👤 Creating default admin user in Postgres..."
-	@docker exec -i ragdb psql -U postgres -d postgres <<'EOSQL'
-	DO $$
-	BEGIN
-		IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin') THEN
-			INSERT INTO users (username, password_hash) VALUES (
-				'admin',
-				'$$2a$$10$$7QjE2fC7UZY0uF6Z/8sX1OHkM1Y3Q7JmP.nQixuQ3hlUL3Q5X9wuy'  -- bcrypt("admin")
-			);
-			INSERT INTO users_roles (user_id, roles)
-			SELECT id, 'ROLE_ADMIN' FROM users WHERE username = 'admin';
-		END IF;
-	END $$;
-	EOSQL
-	@echo "✅ Default admin user ensured (username=admin, password=admin)"
-
-# Login as default admin (username=admin, password=admin) and print JWT
-login-admin:
-	@echo "🔑 Logging in as default admin..."
-	@resp=$$(curl -s -X POST http://localhost:8080/auth/login \
-		-H "Content-Type: application/json" \
-		-d '{"username":"admin","password":"admin"}'); \
-	token=$$(echo $$resp | jq -r '.token'); \
-	if [ "$$token" = "null" ] || [ -z "$$token" ]; then \
-		echo "❌ Failed to login. Response:"; \
-		echo "$$resp"; \
-		exit 1; \
-	fi; \
-	echo "✅ Got admin JWT:"; \
-	echo ""; \
-	echo "$$token"; \
-	echo ""; \
-	echo "💡 Export it with:"; \
-	echo "   export ADMIN_JWT=$$token"
-
-# Promote a user to admin role (requires ADMIN_JWT and username var)
-promote-user:
-	@if [ -z "$$username" ]; then \
-		echo "❌ Please provide a username, e.g. make promote-user username=alice"; \
-		exit 1; \
-	fi
-	@if [ -z "$$ADMIN_JWT" ]; then \
-		echo "❌ ADMIN_JWT not set. Run 'make login-admin' and export the token"; \
-		exit 1; \
-	fi
-	@echo "⬆️  Promoting user '$$username' to ROLE_ADMIN..."
-	@curl -s -X POST http://localhost:8080/auth/promote/$$username \
-		-H "Authorization: Bearer $$ADMIN_JWT" | jq .
-
-# Demote a user (remove admin role) (requires ADMIN_JWT and username var)
-demote-user:
-	@if [ -z "$$username" ]; then \
-		echo "❌ Please provide a username, e.g. make demote-user username=alice"; \
-		exit 1; \
-	fi
-	@if [ -z "$$ADMIN_JWT" ]; then \
-		echo "❌ ADMIN_JWT not set. Run 'make login-admin' and export the token"; \
-		exit 1; \
-	fi
-	@echo "⬇️  Demoting user '$$username' (removing ROLE_ADMIN)..."
-	@curl -s -X POST http://localhost:8080/auth/demote/$$username \
-		-H "Authorization: Bearer $$ADMIN_JWT" | jq .
-
-# List all users and their roles (requires ADMIN_JWT)
-list-users:
-	@if [ -z "$$ADMIN_JWT" ]; then \
-		echo "❌ ADMIN_JWT not set. Run 'make login-admin' and export the token"; \
-		exit 1; \
-	fi
-	@echo "📋 Listing all users..."
-	@curl -s http://localhost:8080/auth/users \
-		-H "Authorization: Bearer $$ADMIN_JWT" | jq .
-
-# Delete a user (requires ADMIN_JWT and username var)
-delete-user:
-	@if [ -z "$$username" ]; then \
-		echo "❌ Please provide a username, e.g. make delete-user username=alice"; \
-		exit 1; \
-	fi
-	@if [ -z "$$ADMIN_JWT" ]; then \
-		echo "❌ ADMIN_JWT not set. Run 'make login-admin' and export the token"; \
-		exit 1; \
-	fi
-	@echo "🗑️  Deleting user '$$username'..."
-	@curl -s -X POST http://localhost:8080/auth/delete/$$username \
-		-H "Authorization: Bearer $$ADMIN_JWT" | jq .
-
 
 # Run tests with coverage and open HTML report
 coverage:

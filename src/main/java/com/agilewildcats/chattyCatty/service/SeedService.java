@@ -1,6 +1,8 @@
 package com.agilewildcats.chattyCatty.service;
 
 import com.agilewildcats.chattyCatty.util.PdfUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -14,18 +16,22 @@ public class SeedService {
     private final DocumentIngestionService ingestionService;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final AtomicReference<JobStatus> status = new AtomicReference<>(JobStatus.idle());
+    private final static Logger logger = LoggerFactory.getLogger(SeedService.class);
 
     public SeedService(DocumentIngestionService ingestionService) {
         this.ingestionService = ingestionService;
     }
 
     public synchronized String startSeed(String docsDirPath) {
+        logger.debug("startSeed : docsDirPath={}", docsDirPath);
+
         JobStatus current = status.get();
         if (current.isRunning()) {
             return "already_running";
         }
         status.set(JobStatus.running("Starting seed..."));
         executor.submit(() -> {
+            logger.debug("startSeed : STARTED");
             try {
                 File docsDir = new File(docsDirPath);
                 if (!docsDir.exists() || !docsDir.isDirectory()) {
@@ -38,6 +44,8 @@ public class SeedService {
                 int processed = 0;
                 for (File f : files) {
                     if (!f.isFile()) continue;
+                    logger.debug("startSeed : SEEDING STARTED {}", f.getName());
+
                     status.set(JobStatus.running("Processing " + f.getName() + " (" + (processed+1) + "/" + total + ")"));
                     String content;
                     String name = f.getName();
@@ -47,8 +55,13 @@ public class SeedService {
                         content = java.nio.file.Files.readString(f.toPath(), StandardCharsets.UTF_8);
                     }
                     ingestionService.addOrUpdateDocument(content, f.getAbsolutePath(), name);
+
+                    logger.debug("startSeed : SEEDING COMPLETED {}", f.getName());
+
                     processed++;
                 }
+                logger.debug("startSeed : COMPLETED");
+
                 status.set(JobStatus.completed("Seed completed: processed " + processed + " files"));
             } catch (Exception ex) {
                 status.set(JobStatus.failed("Seed failed: " + ex.getMessage()));

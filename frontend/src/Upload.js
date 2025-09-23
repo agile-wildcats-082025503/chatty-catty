@@ -30,7 +30,7 @@ const API_BASE = "http://localhost:8080";
        const formData = new FormData();
        files.forEach((f) => formData.append("files", f));
        const headers = {
-              "Content-Type": "multipart/form-data",
+              "Content-Type": "multipart/form-data"
        };
 
        const resp = await axios.post(`${API_BASE}/docs/uploadFiles`, formData, { headers });

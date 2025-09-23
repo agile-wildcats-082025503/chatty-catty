@@ -45,7 +45,11 @@ This is an application for serving AI responses to questions related to the Univ
    1. Add an OpenAI api-key with this line: `OPENAI_API_KEY=Insert-Your-Key-here`
    2. Don't check this file into git. Some IDEs will suggest to add it, but the .gitignore file will filter it out.
 3. Prepare the environment:
-   1. This should be done the first time and repeated whenever maven or npm dependencies are changed.
+   1. Set up the database. Should only be done once.
+   ```bash
+   docker run -d --name ragdb -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=ragdb -p 5432:5432 ankane/pgvector
+   ```
+   2. This should be done the first time and repeated whenever maven or npm dependencies are changed. 
    ```bash
    # Navigate to the project
    cd chatty-catty
@@ -65,9 +69,13 @@ This is an application for serving AI responses to questions related to the Univ
    2. chatty-catty-app - The API tier
    3. chatty-catty-frontend - The UI tier
 
+## Troubleshooting
+
+If docker complains about mvnw, use `dos2unix mvnw` in the project root directory
+
 ## Testing It Out
 * Open a browser to the following url to view the frontend: http://localhost:3000
-* Joke endpoint for verifying the OPENAI API KEY: http://localhost:8080/chat/general?message=Tell%20me%20a%20joke
+* Joke endpoint for verifying the backend has the right OPENAI API KEY: http://localhost:8080/chat/general?message=Tell%20me%20a%20joke
 * View the REST API endpoints for direct API testing using [POSTMAN](https://learning.postman.com/docs/getting-started/overview/) or other integration:
   * View directly in browser http://localhost:8080/swagger-ui.html
   * Download the REST JSON API http://localhost:8080/v3/api-docs

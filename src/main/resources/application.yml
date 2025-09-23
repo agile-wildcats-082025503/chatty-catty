@@ -8,6 +8,15 @@ spring:
       - optional:file:./myconfig.properties
       - optional:file:./myconfig.yml
       - optional:file:./.env
+  spring:
+    profiles:
+      active: ${ACTIVE_PROFILE:#{dev}}
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: update
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+      show-sql: true
   ai:
     openai:
       chat:
@@ -15,27 +24,13 @@ spring:
         model: "gpt-3.5-turbo"
         temperature: "0.7"
       api-key: ${OPENAI_API_KEY}
-  datasource:
-    url: jdbc:postgresql://localhost:5432/ragdb
-    username: postgres
-    password: postgres
-  jpa:
-    properties:
-      hibernate:
-        ddl-auto: update
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-      show-sql: true
-  security:
-    user:
-      name: admin
-      password: admin
+    vectorstore:
+      pgvector:
+      index-type: HNSW
+      distance-type: COSINE_DISTANCE
+      dimensions: 1536
+      max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
   servlet:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
-  web:
-    cors:
-      allowed-origins: "http://localhost:3000, http://localhost:8080"
-      allowed-methods: "GET,PUT,POST,DELETE"
-      allowed-headers: "*"
-      allow-credentials: "true"
