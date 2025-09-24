@@ -1,0 +1,41 @@
+# Do not store secrets and keys in this globally accessible file.
+# For your own properties, use the myconfig.properties or myconfig.yaml in the project root.
+spring:
+  application:
+    name: "chattyCatty"
+  config:
+    import:
+      - optional:file:./myconfig.properties
+      - optional:file:./myconfig.yml
+      - optional:file:./.env
+  datasource:
+    url: "jdbc:postgresql://${POSTGRES_SERVER}/${POSTGRES_INSTANCE}"
+    username: "${POSTGRES_USER}"
+    password: "${POSTGRES_PASSWORD}"
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: update
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+      show-sql: true
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: "gpt-4o-mini"
+          temperature: "0.7"
+    ollama:
+      chat:
+        options:
+          model: llama3.2
+    vectorstore:
+      pgvector:
+      index-type: HNSW
+      distance-type: COSINE_DISTANCE
+      dimensions: 1536
+      max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB

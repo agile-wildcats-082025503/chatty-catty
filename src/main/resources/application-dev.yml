@@ -1,0 +1,4 @@
+# Set the logging level to DEBUG to get all messages
+logging:
+  level:
+    root: INFO

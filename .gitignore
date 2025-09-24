@@ -32,7 +32,7 @@ replay_pid*
 
 # local settings specific to the user
 myconfig.properties
-myconfig.yaml
+myconfig.yml
 
 
 
@@ -93,7 +93,7 @@ dist
 
 # Gatsby files
 .cache/
-public/
+# public/
 
 # Vuepress build output
 .vuepress/dist
