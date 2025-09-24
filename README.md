@@ -35,8 +35,10 @@ This is an application for serving AI responses to questions related to the Univ
         1. [Windows fix regarding WSL updates](https://stackoverflow.com/questions/76479583/docker-desktop-requires-a-newer-wsl-kernel-version)
         2. Ensure it's set to run on restart using Settings->General->Start Docker...
 6. [Node.js and npm](https://www.geeksforgeeks.org/node-js/how-to-download-and-install-node-js-and-npm/)
-    1. Check the "Install the necessary tools" checkbox when installing Node.js (ex: installs Chocolatey on Windows)
+   1. Check the "Install the necessary tools" checkbox when installing Node.js (ex: installs Chocolatey on Windows)
 7. [Make](https://medium.com/@divyeshpal07/mastering-gnu-make-and-makefiles-the-developers-guide-22df3b97cc0d)
+   1. Windows: `choco install make` - if choco isn't found, go back to install Node.js above and Change the install to check the "Necessary Tools" option.
+   2. Linux: `sudo apt-get install build-essential` or [Install make](https://linuxvox.com/blog/install-make-linux/)
 8. [Lombok setup for your IDE](https://projectlombok.org/setup/)
 
 ### Building the System
@@ -50,6 +52,7 @@ This is an application for serving AI responses to questions related to the Univ
    OPENAI_API_KEY=Your-OpenAI-key-here (check the Discord for info)
    POSTGRES_INSTANCE=ragdb
    POSTGRES_SERVER=localhost:5432
+   POSTGRES_SERVER_SPRING=postgres:5432
    POSTGRES_USER=postgres
    POSTGRES_PASSWORD=postgres
    SPRING_PROFILES_ACTIVE=dev
@@ -67,7 +70,7 @@ This is an application for serving AI responses to questions related to the Univ
    ```
 4. Execute the makefile command to spin up docker VMs for the DB, API, and frontend:
    ```bash
-   make dev
+   make clean dev
    ```
    This command builds and starts the VMS:
    1. ragdb: The database
