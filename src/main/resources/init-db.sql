@@ -1,5 +1,12 @@
 CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS hstore;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-\c ragdb
+CREATE TABLE IF NOT EXISTS public.vector_store (
+	id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+	content text,
+	metadata json,
+	embedding vector(1024)
+);
 
-CREATE TABLE documents (id SERIAL PRIMARY KEY, source TEXT, file_path TEXT, content TEXT, embedding TEXT);
+CREATE INDEX ON public.vector_store USING HNSW (embedding vector_cosine_ops);

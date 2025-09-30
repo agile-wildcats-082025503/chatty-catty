@@ -13,7 +13,7 @@ ChattyCatty is a **Retrieval-Augmented Generation (RAG)** stack built with **Jav
 It comes with a **Makefile-driven developer workflow** for ingestion, reseeding, QA, and demos.
 It runs in Virtual Machines (VMs) powered by Docker.
 
-![UofA Women's Wildcat mascot saying Chatty Catty](doc/resources/media/chatty-catty-logo.jpg)
+![UofA Women's Wildcat mascot saying Chatty Catty](frontend/public/chatty-catty-logo.jpg)
 
 ---
 
@@ -40,16 +40,13 @@ This is an application for serving AI responses to questions related to the Univ
    1. Windows: `choco install make` - if choco isn't found, go back to install Node.js above and Change the install to check the "Necessary Tools" option.
    2. Linux: `sudo apt-get install build-essential` or [Install make](https://linuxvox.com/blog/install-make-linux/)
 8. [Lombok setup for your IDE](https://projectlombok.org/setup/)
+9. [Install Ollama](https://ollama.com/download) for the open source AI engine
 
 ### Building the System
 1. Download this codebase using the green button on the top right above that says `[<> Code]`
-2. Create an .env file in the project root.
-   1. Add an OpenAI api-key with this line: `OPENAI_API_KEY=Insert-Your-Key-here`
-   2. Don't check this file into git. Some IDEs will suggest to add it, but the .gitignore file will filter it out.
-3. Prepare the environment:
+2. Prepare the environment:
    1. Create a file in the project root called .env and fill it with the following info:
    ```
-   OPENAI_API_KEY=Your-OpenAI-key-here (check the Discord for info)
    POSTGRES_INSTANCE=ragdb
    POSTGRES_SERVER=localhost:5432
    POSTGRES_SERVER_SPRING=postgres:5432
@@ -68,18 +65,20 @@ This is an application for serving AI responses to questions related to the Univ
    npm install
    cd ..
    ```
-4. Execute the makefile command to spin up docker VMs for the DB, API, and frontend:
+3. Execute the makefile command to spin up docker VMs for the DB, API, and frontend:
    ```bash
    make clean dev
    ```
    This command builds and starts the VMS:
-   1. ragdb: The database
-   2. chatty-catty-app - The API tier
-   3. chatty-catty-frontend - The UI tier
+   * ragdb: The database
+   * chatty-catty-app - The API tier
+   * chatty-catty-frontend - The UI tier
+4. Ensure ollama is running before executing commands in the frontend.
 
 ## Troubleshooting
 
-If docker complains about mvnw, use `dos2unix mvnw` in the project root directory
+* If docker complains about mvnw, use `dos2unix mvnw` in the project root directory
+* Errors with missing table, delete the ragdb container from Docker and then run `mvn clean install`
 
 ## Testing It Out
 * Open a browser to the following url to view the frontend: http://localhost:3000
@@ -121,6 +120,7 @@ See the [DEV_COMMANDS](DEV-COMMANDS.md) file for the full list and explanation o
 * Frontend: React + Axios
 * Ingestion: PDF/TXT/Markdown parsing + OpenAI embeddings
 * Dev Tools: Docker Compose + Makefile
+* AI provider: Ollama
 * The VMs are used for the system:
   * ragdb - The database
   * chatty-catty-frontend - The UI tier

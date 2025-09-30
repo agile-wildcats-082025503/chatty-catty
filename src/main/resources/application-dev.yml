@@ -1,4 +1,27 @@
+# These are the development environment settings for the project (dev). Make settings changes
+# here that are useful while developing the project.
+
 # Set the logging level to DEBUG to get all messages
 logging:
   level:
     root: INFO
+
+spring:
+  sql:
+    init:
+      mode: always
+  ai:
+    postgresml:
+      embedding:
+        create-extension: true
+        options:
+          vector-type: pg_vector
+    vectorstore:
+      pgvector:
+        dimensions: 1024
+        initialize-schema: true
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
