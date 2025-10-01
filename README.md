@@ -44,6 +44,7 @@ This is an application for serving AI responses to questions related to the Univ
 
 ### Building the System
 1. Download this codebase using the green button on the top right above that says `[<> Code]`
+   1. Or switch to the required branch `git checkout existing-branch` 
 2. Prepare the environment:
    1. Create a file in the project root called .env and fill it with the following info:
    ```
@@ -54,31 +55,28 @@ This is an application for serving AI responses to questions related to the Univ
    POSTGRES_PASSWORD=postgres
    SPRING_PROFILES_ACTIVE=dev
    ```
-   2. This should be done the first time and repeated whenever maven or npm dependencies are changed. 
+3. Ensure the dependent services are running:
+   1. Docker (Desktop)
+   2. Ollama
+4. Execute the makefile command to spin up docker containers for the DB, API, and frontend:
    ```bash
    # Navigate to the project
    cd chatty-catty
-
-   # Install dependencies
-   mvn clean install
-   cd frontend
-   npm install
-   cd ..
-   ```
-3. Execute the makefile command to spin up docker VMs for the DB, API, and frontend:
-   ```bash
+   # Use make to create and deploy docker containers
    make clean dev
    ```
-   This command builds and starts the VMS:
-   * ragdb: The database
-   * chatty-catty-app - The API tier
-   * chatty-catty-frontend - The UI tier
-4. Ensure ollama is running before executing commands in the frontend.
+   Here are the container names in docker:
+   * `ragdb`: The database
+   * `chatty-catty-app`: The API tier
+   * `chatty-catty-frontend`: The UI tier
 
 ## Troubleshooting
 
 * If docker complains about mvnw, use `dos2unix mvnw` in the project root directory
-* Errors with missing table, delete the ragdb container from Docker and then run `mvn clean install`
+* Errors with missing table, delete the ragdb container from Docker and then run `make clean dev`
+* Ensure the correct branch is active `git branch`.
+* Pull the related logs into a file and share over Discord.
+* `Makefile:#: *** missing separator. Stop.` The makefile uses spaces for indent instead of tabs.
 
 ## Testing It Out
 * Open a browser to the following url to view the frontend: http://localhost:3000
