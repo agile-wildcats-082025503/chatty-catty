@@ -1,5 +1,10 @@
 # Do not store secrets and keys in this globally accessible file.
-# For your own properties, use the myconfig.properties or myconfig.yaml in the project root.
+  # Use the .env file instead and share securely.
+  # Eventually, the project should move to sharing secrets via vault or similar.
+# Custom settings can be made in similarly-named properties or yml files. For example:
+  # For your own properties, use the myconfig.properties or myconfig.yaml in the project root.
+# Profiles use their own properties. So for working in dev, create application-dev.yml.
+  # For prod, use application-prod.yml. For staging, use application-stage.yml.
 spring:
   application:
     name: "chattyCatty"
@@ -19,16 +24,17 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
       show-sql: true
   ai:
-    openai:
-      api-key: ${OPENAI_API_KEY}
-      chat:
-        options:
-          model: "gpt-4o-mini"
-          temperature: "0.7"
     ollama:
+      base-url: http://host.docker.internal:11434
+      init:
+        pull-model-strategy: always
+        timeout: 60s
+        max-retries: 1
       chat:
         options:
+          keep-alive: 5m
           model: llama3.2
+          temperature: 0.7
     vectorstore:
       pgvector:
       index-type: HNSW

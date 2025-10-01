@@ -10,14 +10,13 @@ import java.util.Map;
 @AllArgsConstructor
 public class ChatFormattedResponse {
     private String answer;      // plain text answer
-    private String markdown;    // markdown version
-    private String html;        // html version
     private Map<String, List<RetrievedDoc>> sources;
 
     @Data
     @AllArgsConstructor
     public static class RetrievedDoc {
         private String content;
+        private String sourceName;
         private double similarity;
     }
 }

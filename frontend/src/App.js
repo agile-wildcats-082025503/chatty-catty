@@ -10,7 +10,7 @@ export default function App() {
       <div className="app">
         <h1>🐱 ChattyCatty</h1>
         <header>
-          <h1>RAG Assistant (Spring Boot)</h1>
+          <h1>Chatty Catty UofA Chatbot</h1>
           <p>Ask questions and upload docs to extend the knowledge base.</p>
         </header>
 
