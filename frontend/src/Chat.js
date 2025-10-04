@@ -30,7 +30,7 @@ export default function Chat() {
     return (
       <div className="answer">
         <h3>🤖 Answer</h3>
-        <pre>{response.answer}</pre>
+        <pre className="response">{response.answer}</pre>
       </div>
     );
   }
