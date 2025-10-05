@@ -1,5 +1,6 @@
 PROJECT_NAME=chatty-catty-app
 COMPOSE=docker-compose
+DOCKER=docker
 include .env
 
 run:
@@ -31,7 +32,7 @@ dblogs:
 
 # Open database shell
 psql:
-	docker exec -it ragdb psql -U postgres -d ragdb
+	$(DOCKER) exec -it ragdb psql -U postgres -d ragdb
 
 # Clean volumes (⚠️ wipes all data)
 clean:
@@ -54,7 +55,7 @@ status:
 # Tail only seed-related logs from the chatty-catty-app container
 logs-seed:
 	@echo "📜 Tailing seed-related logs from chatty-catty-app (Ctrl+C to stop)..."
-	@docker logs -f chatty-catty-app 2>&1 | grep --line-buffered -i "seed"
+	@$(DOCKER) logs -f chatty-catty-app 2>&1 | grep --line-buffered -i "seed"
 
 # Trigger seed and auto-poll status until finished
 reseed:
@@ -108,16 +109,16 @@ dev:
 	export SPRING_PROFILES_ACTIVE=prod
 	$(COMPOSE) --profile ${SPRING_PROFILES_ACTIVE} up --build -d
 	@echo "📜 Tailing logs from chatty-catty-app (Spring Boot) and chatty-catty-frontend (React)..."
-	@docker compose logs -f app frontend
+	@$(DOCKER) compose logs -f app frontend
 
 # Stop stack and reset environment (containers, networks, volumes, logs)
 clean-dev:
 	@echo "🧹 Stopping and cleaning dev environment..."
 	$(COMPOSE) down -v --remove-orphans --rmi local
 	@echo "🗑  Removing dangling images (if any)..."
-	docker image prune -f
+	$(DOCKER) image prune -f
 	@echo "🗑  Removing old container logs..."
-	docker ps -a -q --filter "name=chatty-catty-app" --filter "name=chatty-catty-frontend" | xargs -r docker rm -f
+	$(DOCKER) ps -a -q --filter "name=chatty-catty-app" --filter "name=chatty-catty-frontend" | xargs -r docker rm -f
 	@echo "✅ Clean dev environment ready."
 
 # Full rebuild: clean everything and restart stack with logs
