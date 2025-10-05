@@ -8,12 +8,12 @@ This is an AI chat tool from the Agile Wildcats team for SWFE 503, Fall 2025.
 
 ## Introduction
 
-ChattyCatty is a **Retrieval-Augmented Generation (RAG)** stack built with **Java + Spring Boot + React + PostgreSQL (pgvector)**.
+ChattyCatty is a **Retrieval-Augmented Generation (RAG)** stack built with **Java + Spring Cloud + React + PostgreSQL (pgvector)**.
 
 It comes with a **Makefile-driven developer workflow** for ingestion, reseeding, QA, and demos.
-It runs in Virtual Machines (VMs) powered by Docker.
+It runs in containers powered by Docker.
 
-![UofA Women's Wildcat mascot saying Chatty Catty](doc/resources/media/chatty-catty-logo.jpg)
+![UofA Women's Wildcat mascot saying Chatty Catty](frontend/public/chatty-catty-logo.jpg)
 
 ---
 
@@ -40,56 +40,37 @@ This is an application for serving AI responses to questions related to the Univ
    1. Windows: `choco install make` - if choco isn't found, go back to install Node.js above and Change the install to check the "Necessary Tools" option.
    2. Linux: `sudo apt-get install build-essential` or [Install make](https://linuxvox.com/blog/install-make-linux/)
 8. [Lombok setup for your IDE](https://projectlombok.org/setup/)
+9. [Install Ollama](https://ollama.com/download) for the open source AI engine
 
 ### Building the System
 1. Download this codebase using the green button on the top right above that says `[<> Code]`
-2. Create an .env file in the project root.
-   1. Add an OpenAI api-key with this line: `OPENAI_API_KEY=Insert-Your-Key-here`
-   2. Don't check this file into git. Some IDEs will suggest to add it, but the .gitignore file will filter it out.
-3. Prepare the environment:
-   1. Create a file in the project root called .env and fill it with the following info:
-   ```
-   OPENAI_API_KEY=Your-OpenAI-key-here (check the Discord for info)
-   POSTGRES_INSTANCE=ragdb
-   POSTGRES_SERVER=localhost:5432
-   POSTGRES_SERVER_SPRING=postgres:5432
-   POSTGRES_USER=postgres
-   POSTGRES_PASSWORD=postgres
-   SPRING_PROFILES_ACTIVE=dev
-   ```
-   2. This should be done the first time and repeated whenever maven or npm dependencies are changed. 
+   1. Or switch to the required branch `git checkout existing-branch` 
+2. Prepare the environment:
+   1. See the [DEV_COMMANDS](DEV-COMMANDS.md) for the most updated `.env` file definition.
+3. Ensure the dependent services are running:
+   1. Docker (Desktop)
+   2. Ollama
+4. Execute the makefile command to spin up docker containers for the DB, API, and frontend:
    ```bash
    # Navigate to the project
    cd chatty-catty
-
-   # Install dependencies
-   mvn clean install
-   cd frontend
-   npm install
-   cd ..
-   ```
-4. Execute the makefile command to spin up docker VMs for the DB, API, and frontend:
-   ```bash
+   # Use make to create and deploy docker containers
    make clean dev
    ```
-   This command builds and starts the VMS:
-   1. ragdb: The database
-   2. chatty-catty-app - The API tier
-   3. chatty-catty-frontend - The UI tier
-
-## Troubleshooting
-
-If docker complains about mvnw, use `dos2unix mvnw` in the project root directory
+5. The following container names are now available in docker:
+   * `ragdb`: The Postgres database as defined in the .env file.
+   * `chatty-catty-app`: The API tier, visible on localhost:8080 by default.
+   * `chatty-catty-frontend`: The UI tier, listening on localhost:3000 by default.
 
 ## Testing It Out
 * Open a browser to the following url to view the frontend: http://localhost:3000
-* Joke endpoint for verifying the backend has the right OPENAI API KEY: http://localhost:8080/chat/general?message=Tell%20me%20a%20joke
+* Joke endpoint for verifying the backend has the right AI configuration: http://localhost:8080/chat/general?message=Tell%20me%20a%20joke
 * View the REST API endpoints for direct API testing using [POSTMAN](https://learning.postman.com/docs/getting-started/overview/) or other integration:
   * View directly in browser http://localhost:8080/swagger-ui.html
   * Download the REST JSON API http://localhost:8080/v3/api-docs
   * Download as yaml file http://localhost:8080/v3/api-docs.yaml
 
-NOTE: Add documents into the docs folder for automatic ingestion into RAG.
+NOTE: Add documents into the `docs` folder for automatic ingestion into RAG.
 
 ---
 
@@ -98,6 +79,8 @@ NOTE: Add documents into the docs folder for automatic ingestion into RAG.
 1. Start dev stack:
    ```bash
    make dev
+   # or
+   make clean dev
    ```
 2. Ingest docs (requires admin JWT):
    ```bash
@@ -116,12 +99,13 @@ See the [DEV_COMMANDS](DEV-COMMANDS.md) file for the full list and explanation o
 ---
 
 ### 🏗️ Tech Stack
-* Backend: Java 24 + Spring Boot 6 + JPA
+* Backend: Java 24 + Spring Cloud 6 + JPA
 * Database: PostgreSQL + pgvector
 * Frontend: React + Axios
-* Ingestion: PDF/TXT/Markdown parsing + OpenAI embeddings
+* Ingestion: PDF/TXT/Markdown parsing + AI embeddings to vector database
 * Dev Tools: Docker Compose + Makefile
-* The VMs are used for the system:
+* AI provider: Ollama
+* The containers are used for the system:
   * ragdb - The database
   * chatty-catty-frontend - The UI tier
   * chatty-catty-app - The API tier

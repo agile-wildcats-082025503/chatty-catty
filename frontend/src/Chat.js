@@ -6,7 +6,6 @@ const API_BASE = "http://localhost:8080";
 
 export default function Chat() {
   const [q, setQ] = useState("");
-  const [format, setFormat] = useState("markdown"); // markdown | html | plain
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null); // { answer, markdown, html, sources }
 
@@ -15,7 +14,7 @@ export default function Chat() {
     setLoading(true);
     setResponse(null);
     try {
-      const url = `${API_BASE}/chat/formatted?q=${encodeURIComponent(q)}&format=${format}`;
+      const url = `${API_BASE}/chat/contextual?q=${encodeURIComponent(q)}`;
       const resp = await axios.get(url);
       setResponse(resp.data);
     } catch (err) {
@@ -28,13 +27,12 @@ export default function Chat() {
 
   function renderBody() {
     if (!response) return null;
-    if (format === "html") {
-      return <div dangerouslySetInnerHTML={{ __html: response.html }} />;
-    }
-    if (format === "markdown") {
-      return <ReactMarkdown>{response.markdown}</ReactMarkdown>;
-    }
-    return <pre>{response.answer}</pre>;
+    return (
+      <div className="answer">
+        <h3>🤖 Answer</h3>
+        <pre className="response">{response.answer}</pre>
+      </div>
+    );
   }
 
   return (
@@ -42,13 +40,10 @@ export default function Chat() {
       <h2>Ask the assistant</h2>
 
       <div className="controls">
-        <select value={format} onChange={(e) => setFormat(e.target.value)}>
-          <option value="markdown">Markdown</option>
-          <option value="html">HTML</option>
-          <option value="plain">Plain</option>
-        </select>
         <input
           type="text"
+          autocomplete="question"
+          name="question"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Type your question..."
@@ -65,14 +60,14 @@ export default function Chat() {
 
       {response?.sources && (
         <div className="sources">
-          <h3>Sources (grouped)</h3>
+          <h3>📚 Sources (grouped)</h3>
           {Object.entries(response.sources).map(([source, docs]) => (
             <details key={source} open>
               <summary>{source} — {docs.length} chunk(s)</summary>
               <ul>
                 {docs.map((d, idx) => (
                   <li key={idx}>
-                    <div className="chunk">{d.content}</div>
+                    <div className="chunk"><pre>{d.content}</pre></div>
                     <div className="sim">similarity: {d.similarity.toFixed(2)}</div>
                   </li>
                 ))}
