@@ -43,6 +43,7 @@ export default function Chat() {
         <input
           type="text"
           autocomplete="question"
+          name="question"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Type your question..."
