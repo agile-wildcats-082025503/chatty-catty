@@ -5,7 +5,6 @@ include .env
 
 run:
 	@echo "🚀 Starting CHATTYCATTY stack..."
-	export SPRING_PROFILES_ACTIVE=prod
 	$(COMPOSE) --profile ${SPRING_PROFILES_ACTIVE} up --build -d
 	@echo "⏳ Waiting for app to become healthy..."
 	@until [ "$$(docker inspect --format='{{json .State.Health.Status}}' chatty-catty-app)" = "\"healthy\"" ]; do \
@@ -106,7 +105,6 @@ dev:
 	@echo "==============================================="
 	@echo ""
 	@echo "🚀 Starting stack in dev mode (backend + frontend logs)..."
-	export SPRING_PROFILES_ACTIVE=prod
 	$(COMPOSE) --profile ${SPRING_PROFILES_ACTIVE} up --build -d
 	@echo "📜 Tailing logs from chatty-catty-app (Spring Boot) and chatty-catty-frontend (React)..."
 	@$(DOCKER) compose logs -f app frontend
