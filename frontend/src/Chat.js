@@ -41,6 +41,7 @@ export default function Chat() {
 
       <div className="controls">
         <input
+          list="options"
           type="text"
           autocomplete="question"
           name="question"
@@ -51,7 +52,33 @@ export default function Chat() {
             if (e.key === "Enter") ask();
           }}
         />
-        <button onClick={ask} disabled={loading}>
+        <datalist id="options">
+          <option value="Required degree course work (including semsters courses are offered) - BS program "></option>
+          <option value="Required degree course prerequisites - BS program"></option>
+          <option value="Major admissions requirements BS program"></option>
+          <option value="Typical 4-year course planning guide (on campus or distance student)"></option>
+          <option value="Typical 4-year course planning guide (online campus)"></option>
+          <option value="Pre-approved undergraduate technical electives"></option>
+          <option value="Transfer credit applicability"></option>
+          <option value="Transfer credit process"></option>
+          <option value="Course registration process"></option>
+          <option value="Admission requirements - MS program"></option>
+          <option value="Required course work - MS program"></option>
+          <option value="Required course prerequisits - MS program"></option>
+          <option value="Possible technical electives - MS program"></option>
+          <option value="Information on specialization tracks - MS program"></option>
+          <option value="Thesis vs. non-thesis options - MS program"></option>
+          <option value="Admission requirements - PhD program"></option>
+          <option value="Required course work - PhD program"></option>
+          <option value="Potential minor options - PhD program"></option>
+          <option value="Required course prerequisits - PhD program"></option>
+          <option value="Possible technical electives - PhD program"></option>
+          <option value="Guidance on research focus areas and faculty advisors - PhD program"></option>
+          <option value="Qualifying exam requriments - PhD program"></option>
+          <option value="Dissertation requirements - PhD program"></option>
+          <option value="Funding opportunities - PhD program"></option>
+        </datalist>
+        <button className="buttons" onClick={ask} disabled={loading}>
           {loading ? "Thinking..." : "Ask"}
         </button>
       </div>
