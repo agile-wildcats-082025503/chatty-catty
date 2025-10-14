@@ -8,10 +8,10 @@ This is an AI chat tool from the Agile Wildcats team for SWFE 503, Fall 2025.
 
 ## Introduction
 
-ChattyCatty is a **Retrieval-Augmented Generation (RAG)** stack built with **Java + Spring Boot + React + PostgreSQL (pgvector)**.
+ChattyCatty is a **Retrieval-Augmented Generation (RAG)** stack built with **Java + Spring Cloud + React + PostgreSQL (pgvector)**.
 
 It comes with a **Makefile-driven developer workflow** for ingestion, reseeding, QA, and demos.
-It runs in Virtual Machines (VMs) powered by Docker.
+It runs in containers powered by Docker.
 
 ![UofA Women's Wildcat mascot saying Chatty Catty](frontend/public/chatty-catty-logo.jpg)
 
@@ -46,15 +46,7 @@ This is an application for serving AI responses to questions related to the Univ
 1. Download this codebase using the green button on the top right above that says `[<> Code]`
    1. Or switch to the required branch `git checkout existing-branch` 
 2. Prepare the environment:
-   1. Create a file in the project root called .env and fill it with the following info:
-   ```
-   POSTGRES_INSTANCE=ragdb
-   POSTGRES_SERVER=localhost:5432
-   POSTGRES_SERVER_SPRING=postgres:5432
-   POSTGRES_USER=postgres
-   POSTGRES_PASSWORD=postgres
-   SPRING_PROFILES_ACTIVE=dev
-   ```
+   1. See the [DEV_COMMANDS](DEV-COMMANDS.md) for the most updated `.env` file definition.
 3. Ensure the dependent services are running:
    1. Docker (Desktop)
    2. Ollama
@@ -65,28 +57,20 @@ This is an application for serving AI responses to questions related to the Univ
    # Use make to create and deploy docker containers
    make clean dev
    ```
-   Here are the container names in docker:
-   * `ragdb`: The database
-   * `chatty-catty-app`: The API tier
-   * `chatty-catty-frontend`: The UI tier
-
-## Troubleshooting
-
-* If docker complains about mvnw, use `dos2unix mvnw` in the project root directory
-* Errors with missing table, delete the ragdb container from Docker and then run `make clean dev`
-* Ensure the correct branch is active `git branch`.
-* Pull the related logs into a file and share over Discord.
-* `Makefile:#: *** missing separator. Stop.` The makefile uses spaces for indent instead of tabs.
+5. The following container names are now available in docker:
+   * `ragdb`: The Postgres database as defined in the .env file.
+   * `chatty-catty-app`: The API tier, visible on localhost:8080 by default.
+   * `chatty-catty-frontend`: The UI tier, listening on localhost:3000 by default.
 
 ## Testing It Out
 * Open a browser to the following url to view the frontend: http://localhost:3000
-* Joke endpoint for verifying the backend has the right OPENAI API KEY: http://localhost:8080/chat/general?message=Tell%20me%20a%20joke
+* Joke endpoint for verifying the backend has the right AI configuration: http://localhost:8080/chat/general?message=Tell%20me%20a%20joke
 * View the REST API endpoints for direct API testing using [POSTMAN](https://learning.postman.com/docs/getting-started/overview/) or other integration:
   * View directly in browser http://localhost:8080/swagger-ui.html
   * Download the REST JSON API http://localhost:8080/v3/api-docs
   * Download as yaml file http://localhost:8080/v3/api-docs.yaml
 
-NOTE: Add documents into the docs folder for automatic ingestion into RAG.
+NOTE: Add documents into the `docs` folder for automatic ingestion into RAG.
 
 ---
 
@@ -95,6 +79,8 @@ NOTE: Add documents into the docs folder for automatic ingestion into RAG.
 1. Start dev stack:
    ```bash
    make dev
+   # or
+   make clean dev
    ```
 2. Ingest docs (requires admin JWT):
    ```bash
@@ -113,13 +99,13 @@ See the [DEV_COMMANDS](DEV-COMMANDS.md) file for the full list and explanation o
 ---
 
 ### 🏗️ Tech Stack
-* Backend: Java 24 + Spring Boot 6 + JPA
+* Backend: Java 24 + Spring Cloud 6 + JPA
 * Database: PostgreSQL + pgvector
 * Frontend: React + Axios
-* Ingestion: PDF/TXT/Markdown parsing + OpenAI embeddings
+* Ingestion: PDF/TXT/Markdown parsing + AI embeddings to vector database
 * Dev Tools: Docker Compose + Makefile
 * AI provider: Ollama
-* The VMs are used for the system:
+* The containers are used for the system:
   * ragdb - The database
   * chatty-catty-frontend - The UI tier
   * chatty-catty-app - The API tier

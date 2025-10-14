@@ -37,6 +37,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 6
+    volumes:
+      - ./docs:/app/docs
 
   frontend:
     build:

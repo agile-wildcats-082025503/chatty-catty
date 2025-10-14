@@ -9,23 +9,37 @@ Below is a full cheatsheet of all available commands.
 ## Git Commands
 The code is in git, so here are some commands to assist with development, demo, and testing.
 
+### Getting Started
+If you don't have anything on your system, clone from the main branch:
+   ```bash
+   gh repo clone agile-wildcats-082025503/chatty-catty
+   # Then witch to an existing branch using:
+   git checkout <existing-branch-name>
+   ```
+Or you can clone an existing branch to get started there:
+   ```bash
+   git clone --branch <existing-branch-name> https://github.com/agile-wildcats-082025503/chatty-catty.git
+   ```
+
+### Working with branches
+
+Before making any changes to the code, create a branch
+  ```bash
+  git checkout -b <new-branch-name>
+  ```
+
 Pull the latest code to an existing branch to get the latest or prepare for checkin.
    ```bash
    git checkout main
    git pull origin main
-   git checkout your-branch
+   git checkout <your-branch>
    git merge main
-   ```
-Switch to a branch before making any changes.
-   ```bash
-   git checkout existing-branch
-   git checkout -b new-branch-name
    ```
 Check in changes:
    ```bash
    git add .
-   git commit -m "Description of changes"
-   git push origin your-branch
+   git commit -am "Description of changes"
+   git push origin <your-branch>
    ```
 After checking in changes, it will display a URL to open to get the code changes reviewed and approved.
 
@@ -114,7 +128,7 @@ After checking in changes, it will display a URL to open to get the code changes
    exit 
    ```
 - **Use [pgAdmin](https://www.pgadmin.org/) to connect to the database**
-  Setting up a connection in a local dev env:
+  Setting up a connection in a local dev env (these should mirror what's in the `.env` file):
   1. Add Server
      2. General Tab
         1. Name: ragdb
@@ -129,14 +143,18 @@ After checking in changes, it will display a URL to open to get the code changes
 
 ## 🔑 Environment
 
-- Ensure `OPENAI_API_KEY` is set before using ingestion-related commands. This is done using the .env file but can also be done in the environment itself.
-   ```bash
-   # Set in the environment
-   export OPENAI_API_KEY=your-secret-key
-
-   # Or here's the format for setting in the .env file
-   OPENAI_API_KEY=your-secret-key
+### Environment file `.env` 
+Create a .env file in the top-level directory of the project.
    ```
+   POSTGRES_INSTANCE=ragdb
+   POSTGRES_SERVER=localhost:5432
+   POSTGRES_SERVER_SPRING=postgres:5432
+   POSTGRES_USER=postgres
+   POSTGRES_PASSWORD=postgres
+   SPRING_PROFILES_ACTIVE=dev
+   ```
+Adjust these settings as needed for your environment.
+
 ---
 
 
@@ -166,3 +184,12 @@ Live monitor ingestion + backend health:
 
 `make health`
 
+---
+
+## Troubleshooting
+
+* Errors with missing table, delete the ragdb container from Docker and then run `make clean dev`
+* Ensure the correct branch is active `git branch`.
+* Pull the related logs into a file and share over Discord.
+    * Example (Windows): `discord logs chatty-catty-app > diagnoseme.log`
+* Error `Makefile:#: *** missing separator. Stop.` The makefile uses spaces for indent instead of tabs.
