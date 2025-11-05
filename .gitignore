@@ -260,6 +260,3 @@ worksheet
 
 # Built Visual Studio Code Extensions
 *.vsix
-
-# Secrets for application.yml
-src/main/resources/application.properties

@@ -8,6 +8,15 @@
 spring:
   application:
     name: "chattyCatty"
+  config:
+    import:
+      - optional:file:./myconfig.properties
+      - optional:file:./myconfig.yml
+      - optional:file:./.env
+  datasource:
+    url: "jdbc:postgresql://${POSTGRES_SERVER}/${POSTGRES_INSTANCE}"
+    username: "${POSTGRES_USER}"
+    password: "${POSTGRES_PASSWORD}"
   jpa:
     properties:
       hibernate:
@@ -16,6 +25,7 @@ spring:
       show-sql: true
   ai:
     ollama:
+      base-url: "${OLLAMA_URL}"
       init:
         pull-model-strategy: always
         timeout: 60s

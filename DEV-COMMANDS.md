@@ -156,16 +156,6 @@ Create a .env file in the top-level directory of the project.
    ```
 Adjust these settings as needed for your environment.
 
-## Envrionment file `application.properties`
-create an src/main/resources/application.properties
-  ```
-  spring.datasource.url=jdbc:postgresql://localhost:5432/ragdb
-  spring.datasource.password=postgres
-  spring.datasource.username=postgres
-  spring.ai.ollama.base-url=http://host.docker.internal:11434
-  ```
-Adjust these settings as needed for your environment.
-
 ---
 
 
