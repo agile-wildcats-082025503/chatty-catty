@@ -1,0 +1,27 @@
+# These are the development environment settings for the project (test). Make settings changes
+# here that are useful while unit testing the project.
+
+# Set the logging level to DEBUG to get all messages
+logging:
+  level:
+    root: INFO
+
+spring:
+  sql:
+    init:
+      mode: always
+  ai:
+    postgresql:
+      embedding:
+        create-extension: true
+        options:
+          vector-type: pg_vector
+    vectorstore:
+      pgvector:
+        dimensions: 1024
+        initialize-schema: true
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
