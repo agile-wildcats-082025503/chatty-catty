@@ -25,7 +25,7 @@ spring:
       show-sql: true
   ai:
     ollama:
-      base-url: http://host.docker.internal:11434
+      base-url: "${OLLAMA_URL}"
       init:
         pull-model-strategy: always
         timeout: 60s

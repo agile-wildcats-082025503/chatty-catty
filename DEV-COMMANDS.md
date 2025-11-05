@@ -152,6 +152,7 @@ Create a .env file in the top-level directory of the project.
    POSTGRES_USER=postgres
    POSTGRES_PASSWORD=postgres
    SPRING_PROFILES_ACTIVE=dev
+   OLLAMA_URL=http://host.docker.internal:11434
    ```
 Adjust these settings as needed for your environment.
 
