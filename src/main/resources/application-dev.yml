@@ -11,7 +11,7 @@ spring:
     init:
       mode: always
   ai:
-    postgresml:
+    postgresql:
       embedding:
         create-extension: true
         options:

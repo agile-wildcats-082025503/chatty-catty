@@ -1,7 +1,20 @@
 PROJECT_NAME=chatty-catty-app
 COMPOSE=docker-compose
 DOCKER=docker
-include .env
+ifneq (,$(wildcard .env))
+    include .env
+    export
+endif
+ifeq ($(OS),Windows_NT)
+    BROWSER := powershell.exe -Command Start-Process -FilePath 'chrome.exe' -ArgumentList
+else
+    UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S),Linux)
+        BROWSER := xdg-open
+    else ifeq ($(UNAME_S),Darwin) # macOS
+        BROWSER := open
+    endif
+endif
 
 run:
 	@echo "🚀 Starting CHATTYCATTY stack..."
@@ -213,14 +226,11 @@ health:
 	done
 
 # Run tests with coverage and open HTML report
+coverage: $(eval SPRING_PROFILES_ACTIVE=test)
 coverage:
 	@echo "🧪 Running tests with JaCoCo coverage..."
-	./mvnw clean verify
+	@export OLLAMA_URL=$(OLLAMA_MVNW_URL) && ./mvnw verify
+	@echo "👉 ***NOTE*** If there are errors above - ensure the containers are running by using 'make run' first. Or combine with 'make run coverage'"
 	@echo "📊 Coverage report generated at target/site/jacoco/index.html"
-	@if command -v xdg-open > /dev/null; then \
-		xdg-open target/site/jacoco/index.html; \
-	elif command -v open > /dev/null; then \
-		open target/site/jacoco/index.html; \
-	else \
-		echo "👉 Open target/site/jacoco/index.html manually"; \
-	fi
+	@echo "👉 ***NOTE*** If the below command fails to load the report, open target/site/jacoco/index.html manually"
+	$(BROWSER) $(CURDIR)/target/site/jacoco/index.html
