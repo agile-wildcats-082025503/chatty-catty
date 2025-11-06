@@ -35,8 +35,20 @@ spring:
           keep-alive: 5m
           model: llama3.2
           temperature: 0.7
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
+    postgresql:
+      embedding:
+        create-extension: true
+        options:
+          vector-type: pg_vector
     vectorstore:
       pgvector:
+        dimensions: 1024
+        initialize-schema: true
       index-type: HNSW
       distance-type: COSINE_DISTANCE
       dimensions: 1536
@@ -45,3 +57,6 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
+  sql:
+    init:
+      mode: always

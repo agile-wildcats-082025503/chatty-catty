@@ -22,7 +22,8 @@ public class SeedService {
         this.ingestionService = ingestionService;
     }
 
-    public synchronized String startSeed(String docsDirPath) {
+    public synchronized String startSeed() {
+        final String docsDirPath = "docs";
         logger.debug("startSeed : docsDirPath={}", docsDirPath);
 
         JobStatus current = status.get();

@@ -56,6 +56,21 @@ After checking in changes, it will display a URL to open to get the code changes
 - **`make rebuild-dev`**  
   Wipe environment and restart stack fresh.
 
+### 🛠 Development in Node / React
+
+Updating the UI is done within the frontend directory.
+
+When making changes, it can be faster to simply run npm commands directly like
+`npm install` or `npm run build` to see if changes build.
+
+### 🛠 Development in Java / MVN
+
+Updating the backend is done within the top-level directory - the Java files are located under src.
+
+When making changes, using commands directly can speed diagnosis like
+`mvn compile`.
+
+
 ---
 
 ## 📂 Document Ingestion

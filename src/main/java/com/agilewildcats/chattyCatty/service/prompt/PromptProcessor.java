@@ -19,8 +19,8 @@ import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-
 import org.commonmark.node.*;
+import reactor.core.publisher.Flux;
 
 @Service
 public class PromptProcessor {
@@ -67,7 +67,7 @@ public class PromptProcessor {
      * @param message Message to send to the AI
      * @return AI response and contextual data
      */
-    public String retrieveAndGenerateContextual(String message) {
+    public Flux<String> retrieveAndGenerateContextual(String message) {
         logger.info("retrieveAndGenerateContextual : message='{}'", message);
 
         // 1. Retrieve similar documents
@@ -86,7 +86,7 @@ public class PromptProcessor {
                             Double distance = r.getScore();
                             double similarity = 1 - (distance != null ? distance : 1);
                             return Map.entry(sourceName,
-                                    new ChatFormattedResponse.RetrievedDoc(content, sourceName, similarity));
+                                    new ChatFormattedResponse.RetrievedDoc(sourceName, null, similarity, content));
                         })
                         .collect(Collectors.groupingBy(Map.Entry::getKey,
                                 Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
@@ -96,6 +96,7 @@ public class PromptProcessor {
             docs.forEach(doc -> contextBuilder.append(doc.getContent()).append("\n"));
             contextBuilder.append("\n");
         });
+        ChatFormattedResponse response = new ChatFormattedResponse(groupedDocs);
 
         // 2. Augment the prompt
         SystemPromptTemplate systemPromptTemplate = new SystemPromptTemplate(promptForInfo);
@@ -104,16 +105,35 @@ public class PromptProcessor {
                 new UserMessage(message)));
 
         // 3. Generate the response
-        String answer = chatClient.prompt(prompt).call().content();
-        logger.info("retrieveAndGenerateFormatted : raw answer={}", answer);
-
-        ChatFormattedResponse response = new ChatFormattedResponse(answer, groupedDocs);
-
+        Flux<String> aiStream = chatClient.prompt(prompt).stream().content().transform(flux -> toChunk(flux, 100));
         try {
-            answer = objectMapper.writeValueAsString(response);
+            return aiStream.concatWith(
+                    Flux.just(objectMapper.writeValueAsString(response))
+            );
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return answer;
+    }
+
+    private Flux<String> toChunk(Flux<String> tokenFlux, int chunkSize) {
+        return Flux.create(sink -> {
+            StringBuilder buffer = new StringBuilder();
+            tokenFlux.subscribe(
+                    token -> {
+                        buffer.append(token);
+                        if (buffer.length() >= chunkSize) {
+                            sink.next(buffer.toString());
+                            buffer.setLength(0);
+                        }
+                    },
+                    sink::error,
+                    () -> {
+                        if (buffer.length() > 0) {
+                            sink.next(buffer.toString());
+                        }
+                        sink.complete();
+                    }
+            );
+        });
     }
 }

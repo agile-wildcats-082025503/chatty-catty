@@ -14,13 +14,12 @@ public class AdminController {
     }
 
     /**
-     * TODO: Revisit this method - it gives too much power to the UI and can be a security risk
-     * @param docsDir Path relative to the root for seeding documents
+     * Starts the seed service to refresh all seeded docs to support the RAG system
      * @return
      */
     @PostMapping("/seed")
-    public String startSeed(@RequestParam(name="docsDir", defaultValue = "docs") String docsDir) {
-        return seedService.startSeed(docsDir);
+    public String startSeed() {
+        return seedService.startSeed();
     }
 
     /**

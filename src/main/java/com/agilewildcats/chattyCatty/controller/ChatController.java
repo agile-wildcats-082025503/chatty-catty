@@ -6,7 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+
+import java.util.Map;
 
 /**
  * Entry point for chat queries
@@ -34,9 +38,10 @@ public class ChatController {
         return promptProcessor.retrieveAndGenerate(message);
     }
 
-    @GetMapping("/contextual")
-    public String askContextual(@RequestParam(name="q", required = true) String q) {
+    @GetMapping(value = "/contextual", produces = MediaType.APPLICATION_NDJSON_VALUE)
+    public Flux<String> askContextual(@RequestParam(name="q", required = true) String q) {
         logger.info("askContextual : q='{}'", q);
         return promptProcessor.retrieveAndGenerateContextual(q);
     }
+
 }

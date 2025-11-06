@@ -1,6 +1,7 @@
 package com.agilewildcats.chattyCatty.controller;
 
 import com.agilewildcats.chattyCatty.service.DocumentIngestionService;
+import com.agilewildcats.chattyCatty.service.FileService;
 import com.agilewildcats.chattyCatty.util.PdfUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +16,12 @@ import java.util.List;
 @RequestMapping("/docs")
 public class DocumentController {
 
+    private final FileService fileService;
     private final DocumentIngestionService ingestionService;
     private final static Logger logger = LoggerFactory.getLogger(DocumentController.class);
 
-    public DocumentController(DocumentIngestionService ingestionService) {
+    public DocumentController(FileService fileService, DocumentIngestionService ingestionService) {
+        this.fileService = fileService;
         this.ingestionService = ingestionService;
     }
 
@@ -32,6 +35,8 @@ public class DocumentController {
         logger.debug("uploadFile : fileName={}", filename);
 
         ingestionService.addDocument(content, "/uploadFile", filename);
+        fileService.store(file);
+
         return "File '" + filename + "' uploaded and embedded.";
     }
 
@@ -44,6 +49,7 @@ public class DocumentController {
                     ? PdfUtil.pdfFilesToText(file)
                     : new String(file.getBytes(), StandardCharsets.UTF_8);
 
+            fileService.store(file);
             ingestionService.addDocument(content, "/uploadFile", filename);
         }
         logger.debug("uploadFiles : files.size={}", files.size());

@@ -45,7 +45,7 @@ const API_BASE = "http://localhost:8080";
     setSeedStatus({ state: "requested", message: "Requesting seed..." });
     try {
       const headers = {};
-      await axios.post(`${API_BASE}/admin/seed?docsDir=docs`, null, { headers });
+      await axios.post(`${API_BASE}/admin/seed`, null, { headers });
        pollSeedStatus();
      } catch (err) {
        console.error(err);

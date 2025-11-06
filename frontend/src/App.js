@@ -1,6 +1,6 @@
 // frontend/src/App.js
 import React, { useState } from "react";
-import Chat from "./Chat";
+import ChatBot from "./ChatBot";
 import Upload from "./Upload";
 
 export default function App() {
@@ -19,7 +19,7 @@ export default function App() {
           </div>
 
           <div className="right">
-            <Chat />
+            <ChatBot />
           </div>
         </main>
 
