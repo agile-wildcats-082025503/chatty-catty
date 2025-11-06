@@ -70,7 +70,7 @@ This is an application for serving AI responses to questions related to the Univ
   * Download the REST JSON API http://localhost:8080/v3/api-docs
   * Download as yaml file http://localhost:8080/v3/api-docs.yaml
 
-NOTE: Add documents into the `docs` folder for automatic ingestion into RAG.
+NOTE: Add documents into the `docs` folder for automatic ingestion (seeding) into RAG.
 
 ---
 
