@@ -1,5 +1,5 @@
-# These are the development environment settings for the project (dev). Make settings changes
-# here that are useful while developing the project.
+# These are the development environment settings for the project (test). Make settings changes
+# here that are useful while unit testing the project.
 
 # Set the logging level to DEBUG to get all messages
 logging:
