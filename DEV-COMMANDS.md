@@ -70,7 +70,6 @@ Updating the backend is done within the top-level directory - the Java files are
 When making changes, using commands directly can speed diagnosis like
 `mvn compile`.
 
-
 ---
 
 ## 📂 Document Ingestion
@@ -146,13 +145,12 @@ When making changes, using commands directly can speed diagnosis like
   Setting up a connection in a local dev env (these should mirror what's in the `.env` file):
   1. Add Server
      2. General Tab
-        1. Name: ragdb
+        1. Name: ragdb (as in the `POSTGRES_INSTANCE` setting below)
      3. Connection Tab
         1. Host name/address: localhost
-        2. Port: 5432
+        2. Port: 5432 (see the `.env` file for latest value)
         3. Save password? Enable
-        4. Password: postgres
-           1. This might change - check src/main/resources/application.yml for the latest DB settings.
+        4. See below for postgres `POSTGRES_USER` and `POSTGRES_PASSWORD` values in the `.env` file.
         5. Click Save
 ---
 
@@ -203,10 +201,42 @@ Live monitor ingestion + backend health:
 
 ---
 
-## Troubleshooting
+# Troubleshooting
 
 * Errors with missing table, delete the ragdb container from Docker and then run `make clean dev`
 * Ensure the correct branch is active `git branch`.
 * Pull the related logs into a file and share over Discord.
     * Example (Windows): `discord logs chatty-catty-app > diagnoseme.log`
 * Error `Makefile:#: *** missing separator. Stop.` The makefile uses spaces for indent instead of tabs.
+
+---
+
+# TODO Ideas
+
+## Move ollama to a docker container to speed setup.
+
+Here is how to accomplish docker containerization of the ollama image:
+```yml
+version: '3.8' # Or a newer version like '3.9'
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434" # Exposes Ollama's default port
+    volumes:
+      - ollama_data:/root/.ollama # Persistent storage for models and data
+    restart: unless-stopped
+    # Optional: For GPU support on Linux with NVIDIA Container Toolkit
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+volumes:
+  ollama_data:
+```

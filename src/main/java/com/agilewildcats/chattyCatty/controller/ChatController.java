@@ -38,7 +38,7 @@ public class ChatController {
         return promptProcessor.retrieveAndGenerate(message);
     }
 
-    @GetMapping(value = "/contextual", produces = MediaType.APPLICATION_NDJSON_VALUE)
+    @GetMapping(value = "/contextual", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> askContextual(@RequestParam(name="q", required = true) String q) {
         logger.info("askContextual : q='{}'", q);
         return promptProcessor.retrieveAndGenerateContextual(q);

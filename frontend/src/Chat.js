@@ -29,7 +29,7 @@ export default function Chat() {
     if (!response) return null;
     return (
       <div className="answer">
-        <h3>🤖 Answer</h3>
+        <h3>🐱 Answer</h3>
         <pre className="response">{response.answer}</pre>
       </div>
     );
