@@ -3,9 +3,10 @@ import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import { FaPaperPlane } from 'react-icons/fa';
 import './ChatBot.css';
+
 const API_BASE = "http://localhost:8080";
 
-const Chatbot = () => {
+export default function Chatbot() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -161,5 +162,3 @@ const Chatbot = () => {
         </div>
     );
 };
-
-export default Chatbot;
