@@ -56,11 +56,10 @@ public class PromptProcessor {
 
     /**
      * Retrieves an AI response using the context info that has been loaded from the DB
-     * @param conversationId Conversation ID for AI context
      * @param message Message to send to the AI
      * @return AI response and contextual data
      */
-    public Flux<String> retrieveAndGenerateContextual(String conversationId, String message) {
+    public Flux<String> retrieveAndGenerateContextual(String message) {
         // 1. Gather relevant information
         Map<String, List<ChatFormattedResponse.RetrievedDoc>> groupedDocs = getRelevantDocs(message);
         ChatFormattedResponse additionalInfo = new ChatFormattedResponse(groupedDocs);
@@ -82,7 +81,6 @@ public class PromptProcessor {
         // 3. Generate the response
         Flux<String> aiStream = chatClient
                 .prompt(prompt)
-                .advisors(advisorSpec -> advisorSpec.param(AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY, conversationId))
                 .stream().content()
                 .transform(flux -> toChunk(flux, 100));
         try {

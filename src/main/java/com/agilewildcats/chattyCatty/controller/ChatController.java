@@ -1,7 +1,6 @@
 package com.agilewildcats.chattyCatty.controller;
 
 import com.agilewildcats.chattyCatty.service.prompt.PromptProcessor;
-import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,10 +51,9 @@ public class ChatController {
      * @return AI response
      */
     @GetMapping(value = "/contextual", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<String> askContextual(HttpSession session, @RequestParam(name="message", required = true) String message) {
-        String sessionId = session.getId();
-        logger.info("askContextual : sessionId={}, message='{}'", sessionId, message);
-        return promptProcessor.retrieveAndGenerateContextual(sessionId, message);
+    public Flux<String> askContextual(@RequestParam(name="message", required = true) String message) {
+        logger.info("askContextual : message='{}'", message);
+        return promptProcessor.retrieveAndGenerateContextual(message);
     }
 
 }
