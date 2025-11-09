@@ -1,7 +1,10 @@
 package com.agilewildcats.chattyCatty.service.prompt;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import com.agilewildcats.chattyCatty.dto.ChatFormattedResponse;
@@ -21,6 +24,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.commonmark.node.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class PromptProcessor {
@@ -122,7 +126,7 @@ public class PromptProcessor {
                     token -> {
                         buffer.append(token);
                         if (buffer.length() >= chunkSize) {
-                            sink.next(buffer.toString());
+                            sink.next("{{{" + buffer.toString() + "}}}");
                             buffer.setLength(0);
                         }
                     },
