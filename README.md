@@ -8,7 +8,7 @@ This is an application for serving AI responses to questions related to the Univ
 
 ![UofA Women's Wildcat mascot saying Chatty Catty](frontend/public/chatty-catty-logo.jpg)
 
-### Technical details
+### 💻 Technical details
 ChattyCatty is a **Retrieval-Augmented Generation (RAG)** stack built with **Java + Spring Cloud + React + PostgreSQL (pgvector)**.
 
 It comes with a **Makefile-driven developer workflow** for ingestion, reseeding, QA, and demos.

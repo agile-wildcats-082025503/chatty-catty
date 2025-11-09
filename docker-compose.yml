@@ -44,6 +44,8 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        REACT_APP_HOST_ADDRESS: http://localhost:8080
     container_name: chatty-catty-frontend
     restart: always
     ports:

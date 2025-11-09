@@ -1,6 +1,7 @@
 package com.agilewildcats.chattyCatty.controller;
 
 import com.agilewildcats.chattyCatty.service.prompt.PromptProcessor;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +33,29 @@ public class ChatController {
         ask("Tell me a joke");
     }
 
+    /**
+     * Simple chat endpoint to demo connection to the AI
+     * @param message Message to send to the AI
+     * @return AI response
+     */
     @GetMapping("/general")
     public String ask(@RequestParam(name="message", defaultValue = "Tell me a joke") String message) {
         logger.info("ask : message={}", message);
         return promptProcessor.retrieveAndGenerate(message);
     }
 
+    /**
+     * Chat endpoint that returns a contextually relevant response using
+     * conversation history as well as Report Augmented Generation from
+     * stored data.
+     * @param message Message to send to the AI
+     * @return AI response
+     */
     @GetMapping(value = "/contextual", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<String> askContextual(@RequestParam(name="q", required = true) String q) {
-        logger.info("askContextual : q='{}'", q);
-        return promptProcessor.retrieveAndGenerateContextual(q);
+    public Flux<String> askContextual(HttpSession session, @RequestParam(name="message", required = true) String message) {
+        String sessionId = session.getId();
+        logger.info("askContextual : sessionId={}, message='{}'", sessionId, message);
+        return promptProcessor.retrieveAndGenerateContextual(sessionId, message);
     }
 
 }
