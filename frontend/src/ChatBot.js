@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import { FaPaperPlane } from 'react-icons/fa';
 import './ChatBot.css';
 
-const API_BASE = "http://localhost:8080";
+const API_BASE = process.env.REACT_APP_HOST_ADDRESS;
 
 export default function Chatbot() {
     const [messages, setMessages] = useState([]);
@@ -55,7 +55,7 @@ export default function Chatbot() {
             setCount(Date.now());
         }
 
-        const eventSource = new EventSource(`${API_BASE}/chat/contextual?q=${encodeURIComponent(input)}`);
+        const eventSource = new EventSource(`${API_BASE}/chat/contextual?message=${encodeURIComponent(input)}`);
         eventSource.onmessage = (event) => {
             if (aiMessage.text == '...') {
                 // Thinking time has completed - blank out the message and log the time

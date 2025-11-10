@@ -1,9 +1,12 @@
 # Build stage
 FROM node:18-alpine AS build
+ARG REACT_APP_HOST_ADDRESS
+
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
+ENV REACT_APP_HOST_ADDRESS=${REACT_APP_HOST_ADDRESS}
 RUN npm run build
 
 # Production stage - serve static files using nginx

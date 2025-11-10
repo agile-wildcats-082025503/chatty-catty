@@ -12,7 +12,7 @@ export default function SimpleTable({ data }) {
       <thead>
         <tr>
           {columns.map((col) => (
-            <th key={col}>{col}</th>
+            <th key={col} class={`column_${col}`}>{col}</th>
           ))}
         </tr>
       </thead>
@@ -20,7 +20,7 @@ export default function SimpleTable({ data }) {
         {data.map((row) => (
           <tr key={row.id}>
             {columns.map((col) => (
-              <td key={`${row.id}-${col}`}>
+              <td key={`${row.id}-${col}`} class={`column_${col}`}>
                 {row[col]}
               </td>
             ))}
