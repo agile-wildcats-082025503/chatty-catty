@@ -1,14 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import { FaPaperPlane } from 'react-icons/fa';
 import './ChatBot.css';
-const API_BASE = "http://localhost:8080";
 
-const Chatbot = () => {
+const API_BASE = process.env.REACT_APP_HOST_ADDRESS;
+
+export default function Chatbot() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
+    const [count, setCount] = useState(0); // Used to refresh the UI while streaming
+
+    const linkify = (inputText) => {
+        var replacedText, replacePattern1, replacePattern2, replacePattern3;
+
+        //URLs starting with http://, https://, or ftp://
+        replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+        replacedText = inputText.replace(replacePattern1, '[$1]($1)');
+
+        //Change email addresses to mailto:: links.
+        replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+        replacedText = replacedText.replace(replacePattern3, '[$1](mailto:$1)');
+
+        return replacedText;
+    }
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, count]);
+
+    const scrollToBottom = () => {
+        const myDiv = document.getElementById("chatbox");
+        myDiv.scrollTop = myDiv.scrollHeight;
+    }
 
     const handleSend = async () => {
         if (input.trim() === '') return;
@@ -17,29 +42,56 @@ const Chatbot = () => {
         setMessages([...messages, newMessage]);
         setInput('');
         setLoading(true);
+        const start = Date.now();
+        var startRendering;
 
-        try {
-            const response = await axios.get(`${API_BASE}/chat/contextual?q=${encodeURIComponent(input)}`);
-            const aiMessage = { text: response.data, sender: 'ai' };
-            const indexSources = response.data.indexOf('{"sources":{');
+        var aiMessage = { text: '...', sender: 'ai' };
+        setMessages([...messages, newMessage, aiMessage]);
+
+        function handleClose() {
+            eventSource.close();
+            setLoading(false);
+            console.log("⏱️ Rendering time: " + (Date.now() - startRendering) + "ms");
+            setCount(Date.now());
+        }
+
+        const eventSource = new EventSource(`${API_BASE}/chat/contextual?message=${encodeURIComponent(input)}`);
+        eventSource.onmessage = (event) => {
+            if (aiMessage.text == '...') {
+                // Thinking time has completed - blank out the message and log the time
+                aiMessage.text = "";
+                console.log("⏱️ Thinking time: " + (Date.now() - start) + "ms");
+                startRendering = Date.now();
+                setCount(Date.now());
+            }
+            if (!event || !event.data) return;
+            let dataNoEvents = event.data.replace(/^{{{/g, "").replace(/}}}$/g, "");
+            let answerChunk = dataNoEvents;
+            const indexSources = dataNoEvents.indexOf('{"sources":{');
             if (indexSources != -1) {
-                aiMessage.text = response.data.substring(0, indexSources) + '\n\n**📚 Sources (grouped)**\n';
-                const sourcesMap = JSON.parse(response.data.substring(indexSources));
+                aiMessage.text += dataNoEvents.substring(0, indexSources) + '\n\n**📚 Sources (grouped)**\n';
+                answerChunk = '';
+                aiMessage.text = linkify(aiMessage.text);
+                const sourcesMap = JSON.parse(dataNoEvents.substring(indexSources));
                 for (let key in sourcesMap.sources) {
-                    let value = sourcesMap.sources[key];
-                    aiMessage.text += '* [' + key + '](' + `${API_BASE}/files/${encodeURIComponent(key)}` + ')\n';
-                    for (const source of value) {
-                        aiMessage.text += '  * (Chunk) Similarity: ' + source.similarity + '\n';
+                    let val = sourcesMap.sources[key];
+                    answerChunk += '* [' + key + '](' + `${API_BASE}/files/${encodeURIComponent(key)}` + ')\n';
+                    for (const source of val) {
+                        answerChunk += '  * (Chunk) Similarity: ' + source.similarity + '\n';
                     }
-                    aiMessage.text += '\n';
+                    answerChunk += '\n';
                 }
             }
-            setMessages([...messages, newMessage, aiMessage]);
-        } catch (error) {
-            console.error("Error fetching AI response", error);
-        } finally {
-            setLoading(false);
-        }
+            aiMessage.text += answerChunk;
+            setCount(Date.now());
+        };
+        eventSource.onerror = (error) => {
+            console.error("⚠️ Error fetching AI response (check app logs)", error);
+            handleClose();
+        };
+        return () => {
+            handleClose();
+        };
     };
 
     const handleInputChange = (e) => {
@@ -54,23 +106,17 @@ const Chatbot = () => {
 
     return (
         <div className="chatbot-container">
-            <div className="chatbox">
+            <div className="chatbox" id="chatbox">
                 {messages.map((message, index) => (
                     <div key={index} className={`message-container ${message.sender}`}>
                         <p className="avatar">{message.sender === 'user' ? "🧑" : "🤖"}</p>
-                        <div className={`message ${message.sender}`}>
+                        <div className={`message ${message.sender}`} id={`msg${messages.length}part${count}`}>
                             <ReactMarkdown>
                                 {message.text}
                             </ReactMarkdown>
                         </div>
                     </div>
                 ))}
-                {loading && (
-                    <div className="message-container ai">
-                        <p className="avatar">🤖</p>
-                        <div className="message ai">...</div>
-                    </div>
-                )}
             </div>
             <div className="input-container">
                 <input
@@ -116,5 +162,3 @@ const Chatbot = () => {
         </div>
     );
 };
-
-export default Chatbot;

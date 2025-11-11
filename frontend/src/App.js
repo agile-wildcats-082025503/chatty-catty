@@ -1,32 +1,36 @@
-// frontend/src/App.js
-import React, { useState } from "react";
-import ChatBot from "./ChatBot";
-import Upload from "./Upload";
+import React, { useContext, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// Structural imports
+import Header from './Header';
+import NavBar from './NavBar';
+import Footer from './Footer';
+// Routes listed below
+import ChatBot from './ChatBot';
+import Upload from './Upload';
+import About from './About';
+import NotFound from './NotFound';
 
 export default function App() {
 
   return (
-    <div>
+    <Router>
       <div className="app">
-        <header>
-          <h1>U of A Chatbot</h1>
-          <p>Ask questions and upload docs to extend the knowledge base.</p>
-        </header>
-
+        <Header />
         <main>
           <div className="left">
-            <Upload />
+            <NavBar />
           </div>
-
           <div className="right">
-            <ChatBot />
+            <Routes>
+              <Route path="/" element={<ChatBot />} />
+              <Route path="/Upload" element={<Upload />} />
+              <Route path="/About" element={<About />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
           </div>
         </main>
-
-        <footer>
-          <small>Frontend talking to backend at <code>http://localhost:8080</code></small>
-        </footer>
+        <Footer />
       </div>
-    </div>
+    </Router>
   );
 }

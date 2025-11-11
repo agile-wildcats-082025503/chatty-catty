@@ -1,27 +1,25 @@
 # 🐱 ChattyCatty – Java + Spring RAG System
 
-[![Java CI with Maven](https://github.com/agile-wildcats-082025503/chatty-catty/actions/workflows/tests.yml/badge.svg)](https://github.com/agile-wildcats-082025503/chatty-catty/actions/workflows/tests.yml)
-
-[![codecov](https://codecov.io/gh/your-org/chattycatty/branch/main/graph/badge.svg)](https://codecov.io/gh/your-org/chattycatty)
-
 This is an AI chat tool from the Agile Wildcats team for SWFE 503, Fall 2025.
 
-## Introduction
+## 💬 Introduction
 
-ChattyCatty is a **Retrieval-Augmented Generation (RAG)** stack built with **Java + Spring Cloud + React + PostgreSQL (pgvector)**.
-
-It comes with a **Makefile-driven developer workflow** for ingestion, reseeding, QA, and demos.
-It runs in containers powered by Docker.
+This is an application for serving AI responses to questions related to the University of Arizona's SWFE degrees.
 
 ![UofA Women's Wildcat mascot saying Chatty Catty](frontend/public/chatty-catty-logo.jpg)
 
+### 💻 Technical details
+ChattyCatty is a **Retrieval-Augmented Generation (RAG)** stack built with **Java + Spring Cloud + React + PostgreSQL (pgvector)**.
+
+It comes with a **Makefile-driven developer workflow** for ingestion, reseeding, QA, and demos.
+
+It runs in containers powered by Docker.
+
 ---
 
-This is an application for serving AI responses to questions related to the University of Arizona's SWFE degrees. 
+## ⚙️ Installation
 
-## Installation
-
-### Requirements
+### ⚠️ Requirements
 
 1. [Git Client](http://git-scm.com)
 2. [Java Development Kit](https://www.oracle.com/java/technologies/downloads/)
@@ -42,11 +40,11 @@ This is an application for serving AI responses to questions related to the Univ
 8. [Lombok setup for your IDE](https://projectlombok.org/setup/)
 9. [Install Ollama](https://ollama.com/download) for the open source AI engine
 
-### Building the System
+### 🔧 Building the System
 1. Download this codebase using the green button on the top right above that says `[<> Code]`
-   1. Or switch to the required branch `git checkout existing-branch` 
+   1. If needed, switch to the required branch `git checkout existing-branch` 
 2. Prepare the environment:
-   1. See the [DEV_COMMANDS](DEV-COMMANDS.md) for the most updated `.env` file definition.
+   1. See the [DEV_COMMANDS](DEV-COMMANDS.md?id=🔑-Environment) for the most updated `.env` file definition.
 3. Ensure the dependent services are running:
    1. Docker (Desktop)
    2. Ollama
@@ -54,15 +52,15 @@ This is an application for serving AI responses to questions related to the Univ
    ```bash
    # Navigate to the project
    cd chatty-catty
-   # Use make to create and deploy docker containers
-   make clean dev
+   # Use make to create and deploy docker containers and seed the chatbot with relevant RAG information.
+   make clean run
    ```
 5. The following container names are now available in docker:
    * `ragdb`: The Postgres database as defined in the .env file.
    * `chatty-catty-app`: The API tier, visible on localhost:8080 by default.
    * `chatty-catty-frontend`: The UI tier, listening on localhost:3000 by default.
 
-## Testing It Out
+## 🔬 Testing It Out
 * Open a browser to the following url to view the frontend: http://localhost:3000
 * Joke endpoint for verifying the backend has the right AI configuration: http://localhost:8080/chat/general?message=Tell%20me%20a%20joke
 * View the REST API endpoints for direct API testing using [POSTMAN](https://learning.postman.com/docs/getting-started/overview/) or other integration:
@@ -74,27 +72,34 @@ NOTE: Add documents into the `docs` folder for automatic ingestion (seeding) int
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start - Development
 
-1. Start dev stack:
+1. Update the `.env` file with the latest changes from [DEV_COMMANDS](DEV-COMMANDS.md?id=🔑-Environment).
+2. Start the containers for the DB, frontend, and REST microservice(s):
    ```bash
+   # Using the dev target tails the container logs which is useful during development.
    make dev
-   # or
-   make clean dev
+   # or use the run target instead  
+   make run
    ```
-2. Ingest docs (requires admin JWT):
+3. Ingest docs. This is only necessary if dev mode was chosen above.
    ```bash
+   # Use the make command to start this via command line and view the logs.
    make reseed-logs
+   # Or use the [Start Seed] button in the web UI. It will report success or errors encountered. 
    ```
-5. Run QA checks:
+4. Run QA checks:
    ```bash
+   # Test if the system is stable using:
    make qa-full
+   # Run tests and report coverage (only works if step 1 has been executed first, separately):
+   make coverage
    ```
 
 ---
-### Developer Usage
+### 👨‍💻 Developer Usage
 
-See the [DEV_COMMANDS](DEV-COMMANDS.md) file for the full list and explanation of Makefile commands.
+See the [DEV_COMMANDS](DEV-COMMANDS.md) file for the full list and explanation of Makefile targets, which can often be combined into a single call.
 
 ---
 
