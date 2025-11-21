@@ -67,7 +67,6 @@ public class FileService {
                 return resource;
             } else {
                 throw new FileServiceException("Unable to read file: " + filename);
-
             }
         } catch (MalformedURLException e) {
             throw new FileServiceException("Unable to read file: " + filename, e);

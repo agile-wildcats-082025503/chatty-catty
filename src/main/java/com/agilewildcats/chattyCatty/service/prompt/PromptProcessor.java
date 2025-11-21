@@ -5,10 +5,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.agilewildcats.chattyCatty.dto.ChatFormattedResponse;
+import com.agilewildcats.chattyCatty.util.DegreeTypeParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor;
+import org.springframework.ai.vectorstore.filter.Filter;
+import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -26,6 +28,7 @@ import reactor.core.publisher.Flux;
 @Service
 public class PromptProcessor {
     private final ChatClient chatClient;
+    private final ChatClient chatClientNoMemory;
     private final VectorStore vectorStore;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -38,6 +41,7 @@ public class PromptProcessor {
         this.chatClient = chatClientBuilder
                 .defaultAdvisors(new MessageChatMemoryAdvisor(new InMemoryChatMemory()))
                 .build();
+        this.chatClientNoMemory = chatClientBuilder.build();
         this.vectorStore = vectorStore;
     }
 
@@ -47,11 +51,13 @@ public class PromptProcessor {
      * @return AI response
      */
     public String retrieveAndGenerate(String message) {
+        // 0. Sanitize and protect from prompt injection
+        message = sanitizeInput(message);
+
+        // 1. Generate the response
         Prompt prompt = new Prompt(List.of(
                 new UserMessage(message)));
-
-        // 3. Generate the response
-        return chatClient.prompt(prompt).call().content();
+        return chatClientNoMemory.prompt(prompt).call().content();
     }
 
     /**
@@ -60,6 +66,9 @@ public class PromptProcessor {
      * @return AI response and contextual data
      */
     public Flux<String> retrieveAndGenerateContextual(String message) {
+        // 0. Sanitize and protect from prompt injection
+        message = sanitizeInput(message);
+
         // 1. Gather relevant information
         Map<String, List<ChatFormattedResponse.RetrievedDoc>> groupedDocs = getRelevantDocs(message);
         ChatFormattedResponse additionalInfo = new ChatFormattedResponse(groupedDocs);
@@ -93,10 +102,22 @@ public class PromptProcessor {
         }
     }
 
+    public String sanitizeInput(String input) {
+        // Remove dangerous instructions
+        return input.replaceAll("(?i)ignore|system prompt|you are", "");
+    }
+
     private Map<String, List<ChatFormattedResponse.RetrievedDoc>> getRelevantDocs(String message) {
+        String degreeType = DegreeTypeParser.parse(message);
+        if (degreeType == null || degreeType.isEmpty()) {
+            degreeType = "degree IN ['fake', 'any']";
+        } else {
+            degreeType = String.format("degree IN ['%s', 'any']", degreeType);
+        }
         // Retrieve similar documents
         List<Document> results = vectorStore.similaritySearch(
                 SearchRequest.builder()
+                        .filterExpression(degreeType)
                         .query(message)
                         .topK(4)
                         .build()
